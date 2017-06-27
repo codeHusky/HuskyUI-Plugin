@@ -15,7 +15,7 @@ import javax.inject.Inject;
 /**
  * Created by lokio on 6/27/2017.
  */
-@Plugin(id="huskyui",name="HuskyUI",version = "1.0.0",description = "A UI framework.")
+@Plugin(id="huskyui",name="HuskyUI",version = "0.1.0",description = "A UI framework.")
 public class HUIPlugin {
     public static HUIPlugin instance;
 
