@@ -1,6 +1,6 @@
 package com.codehusky.huskyui.components.inventory;
 
-import com.codehusky.huskycrates.HuskyCrates;
+import com.codehusky.huskyui.HUIPlugin;
 import com.codehusky.huskyui.components.inventory.elements.ActionElement;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
@@ -76,7 +76,7 @@ public class AutoPage extends Page {
                     }
                 })
                 .property(InventoryTitle.PROPERTY_NAME,InventoryTitle.of(title))
-                .build(HuskyCrates.instance);
+                .build(HUIPlugin.instance);
         int slotNum = 0;
         for(Inventory slot : ourInventory.slots()){
             if(autoElements.size() > slotNum){

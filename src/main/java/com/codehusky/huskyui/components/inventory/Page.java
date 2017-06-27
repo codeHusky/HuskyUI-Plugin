@@ -1,5 +1,6 @@
 package com.codehusky.huskyui.components.inventory;
 
+import com.codehusky.huskyui.HUIPlugin;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
@@ -11,7 +12,6 @@ import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import com.codehusky.huskycrates.HuskyCrates;
 import com.codehusky.huskyui.components.State;
 import com.codehusky.huskyui.components.inventory.elements.ActionElement;
 
@@ -61,7 +61,7 @@ public class Page extends State {
                     }
                 })
                 .property(InventoryTitle.PROPERTY_NAME,InventoryTitle.of(title))
-                .build(HuskyCrates.instance);
+                .build(HUIPlugin.instance);
 
         int slotNum = 0;
         for(Inventory slot : ourInventory.slots()){

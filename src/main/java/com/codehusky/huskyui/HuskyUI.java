@@ -1,6 +1,5 @@
 package com.codehusky.huskyui;
 
-import com.codehusky.huskycrates.HuskyCrates;
 import com.codehusky.huskyui.components.inventory.Page;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -42,9 +41,9 @@ public class HuskyUI {
         ourState.observer = player;
         if(ourState instanceof Page) {
             Page ourPage = (Page) ourState;
-            player.openInventory(ourPage.generatePageView(), HuskyCrates.instance.genericCause);
+            player.openInventory(ourPage.generatePageView(), HUIPlugin.instance.genericCause);
         }else{
-            player.closeInventory(HuskyCrates.instance.genericCause);
+            player.closeInventory(HUIPlugin.instance.genericCause);
             player.sendMessage(Text.of(TextColors.RED, "An invalid or incomplete state was opened."));
             player.sendMessage(Text.of(TextColors.RED, "ID: " + state));
         }
