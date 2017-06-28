@@ -15,8 +15,11 @@
  * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.components;
+package com.codehusky.huskyui.states.action;
+
+import javax.annotation.Nonnull;
 
 public interface UIRunnable {
-    void run(RunnableAction context);
+
+    void run(@Nonnull final RunnableAction context);
 }

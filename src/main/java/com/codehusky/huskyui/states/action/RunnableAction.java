@@ -15,23 +15,50 @@
  * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.components;
+package com.codehusky.huskyui.states.action;
 
+import com.codehusky.huskyui.states.StateContainer;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class RunnableAction extends Action {
 
-    private UIRunnable runnable;
+    @Nullable private UIRunnable runnable;
 
-    public RunnableAction(StateContainer gui, Player observer, boolean isCloseAction, boolean isBackAction, String goalState) {
-        super(gui, observer, isCloseAction, isBackAction, goalState);
+    public RunnableAction(@Nonnull final StateContainer container,
+                          @Nonnull final Player observer,
+                          @Nonnull final ActionType type,
+                          @Nonnull final String goalState) {
+        this(container, observer, type, goalState, null);
     }
 
-    public void setRunnable(UIRunnable runnable){
+    public RunnableAction(@Nonnull final StateContainer container,
+                          @Nonnull final Player observer,
+                          @Nonnull final ActionType type,
+                          @Nonnull final String goalState,
+                          @Nullable final UIRunnable runnable) {
+        super(container, observer, type, goalState);
         this.runnable = runnable;
     }
+
+    @Nullable
+    public UIRunnable getRunnable() {
+        return this.runnable;
+    }
+
+    public void setRunnable(@Nonnull final UIRunnable runnable) {
+        this.runnable = runnable;
+    }
+
     @Override
-    public void runAction(String currentState){
-        runnable.run(this);
+    public void runAction(@Nonnull final String currentState) {
+        if (this.runnable != null) {
+            this.runnable.run(this);
+        } else {
+            this.getObserver().sendMessage(Text.of(TextColors.RED, "Cannot run a null action!"));
+        }
     }
 }

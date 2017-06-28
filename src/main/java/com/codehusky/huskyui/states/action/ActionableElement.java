@@ -17,32 +17,25 @@
 
 package com.codehusky.huskyui.states.action;
 
-import com.codehusky.huskyui.states.StateContainer;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class ItemAction extends Action {
+public class ActionableElement extends Element {
 
-    @Nullable private ItemStack item;
+    @Nonnull private Action action;
 
-    private ItemAction(@Nonnull final StateContainer container,
-                       @Nonnull final Player observer,
-                       @Nonnull final ActionType type,
-                       @Nonnull final String goalState,
-                       @Nonnull final ItemStack item) {
-        super(container, observer, type, goalState);
+    public ActionableElement(@Nonnull final Action action, @Nonnull final ItemStack item) {
+        super(item);
 
-        this.item = item;
+        this.action = action;
     }
 
-    @Nullable
-    public ItemStack getItem() {
-        return this.item;
+    @Nonnull
+    public Action getAction() {
+        return this.action;
     }
 
-    public void setItem(@Nonnull final ItemStack item) {
-        this.item = item;
+    public static ActionableElement of(@Nonnull final Action action, @Nonnull final ItemStack item) {
+        return new ActionableElement(action, item);
     }
 }

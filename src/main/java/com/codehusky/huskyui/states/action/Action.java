@@ -15,49 +15,76 @@
  * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.components;
+package com.codehusky.huskyui.states.action;
 
 import com.codehusky.huskyui.HuskyUI;
+import com.codehusky.huskyui.states.StateContainer;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import javax.annotation.Nonnull;
 
 /**
  * This is something that the State handler will use in the occurrence that this is called to decide
  * where to move the current GUI Instance to.
  */
 public class Action {
-    public StateContainer gui;
-    public Player observer;
-    public boolean isCloseAction;
-    public boolean isBackAction;
-    public String goalState;
-    public Action(StateContainer gui, Player observer, boolean isCloseAction, boolean isBackAction, String goalState){
-        this.gui = gui;
+
+    @Nonnull private final StateContainer container;
+    @Nonnull private final Player observer;
+    @Nonnull private final ActionType type;
+    @Nonnull private final String goalState;
+
+    public Action(@Nonnull final StateContainer container,
+                  @Nonnull final Player observer,
+                  @Nonnull final ActionType type,
+                  @Nonnull final String goalState) {
+        this.container = container;
         this.observer = observer;
-        this.isCloseAction = isCloseAction;
-        this.isBackAction=isBackAction;
+        this.type = type;
         this.goalState = goalState;
     }
 
-    public void runAction(String currentState){
-        //fired when action is activated
-        if(isCloseAction)
-            observer.closeInventory(HuskyUI.instance.genericCause);
-        else if(isBackAction) {
-            if(gui.getState(currentState).hasParent) {
-                gui.openState(observer, gui.getState(currentState).parentState);
-            }else{
-                observer.playSound(SoundTypes.BLOCK_ANVIL_LAND,observer.getLocation().getPosition(),0.5);
-                observer.closeInventory(HuskyUI.instance.genericCause);
-                observer.sendMessage(Text.of(TextColors.RED,"Impossible back action, closing broken state."));
-            }
-        }else{
-            //normal state change
-            //observer.closeInventory(HuskyCrates.instance.genericCause);
+    @Nonnull
+    public StateContainer getContainer() {
+        return this.container;
+    }
 
-            gui.openState(observer,goalState);
+    @Nonnull
+    public Player getObserver() {
+        return this.observer;
+    }
+
+    @Nonnull
+    public ActionType getType() {
+        return this.type;
+    }
+
+    @Nonnull
+    public String getGoalState() {
+        return this.goalState;
+    }
+
+    public void runAction(@Nonnull final String currentState) {
+        if (this.type == ActionType.CLOSE) {
+            this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
+        } else if (this.type == ActionType.BACK) {
+            if (this.container.hasState(currentState)) {
+                if (this.container.getState(currentState).hasParent()) {
+                    this.container.openState(this.observer, this.container.getState(currentState).getParent());
+                } else {
+                    this.observer.playSound(SoundTypes.BLOCK_ANVIL_LAND, this.observer.getLocation().getPosition(), 0.5);
+                    this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
+                    this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
+                }
+            } else {
+                this.observer.sendMessage(Text.of(TextColors.RED, "Cannot travel non-existent state."));
+                this.observer.sendMessage(Text.of(TextColors.RED, "Invalid ID: " + currentState));
+            }
+        } else {
+            // ActionType == ActionType.NORMAL
+            this.container.openState(this.observer, this.goalState);
         }
     }
 }
