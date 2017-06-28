@@ -12,36 +12,58 @@ import org.spongepowered.api.text.format.TextColors;
  * where to move the current GUI Instance to.
  */
 public class Action {
-    public HuskyUI gui;
-    public Player observer;
-    public boolean isCloseAction;
-    public boolean isBackAction;
-    public String goalState;
-    public Action(HuskyUI gui, Player observer, boolean isCloseAction, boolean isBackAction, String goalState){
+    private HuskyUI gui;
+    private Player observer;
+    private boolean isCloseAction;
+    private boolean isBackAction;
+    private String goalState;
+
+
+    public Action(HuskyUI gui, Player observer, boolean isCloseAction, boolean isBackAction, String goalState) {
         this.gui = gui;
         this.observer = observer;
         this.isCloseAction = isCloseAction;
-        this.isBackAction=isBackAction;
+        this.isBackAction = isBackAction;
         this.goalState = goalState;
     }
 
-    public void runAction(String currentState){
+    public void runAction(String currentState) {
         //fired when action is activated
-        if(isCloseAction)
-            observer.closeInventory(HUIPlugin.instance.genericCause);
-        else if(isBackAction) {
-            if(gui.getState(currentState).hasParent) {
-                gui.openState(observer, gui.getState(currentState).parentState);
-            }else{
-                observer.playSound(SoundTypes.BLOCK_ANVIL_LAND,observer.getLocation().getPosition(),0.5);
-                observer.closeInventory(HUIPlugin.instance.genericCause);
-                observer.sendMessage(Text.of(TextColors.RED,"Impossible back action, closing broken state."));
+        if (isCloseAction)
+            observer.closeInventory(HUIPlugin.getInstance().getGenericCause());
+        else if (isBackAction) {
+            if (gui.getState(currentState).hasParent()) {
+                gui.openState(observer, gui.getState(currentState).getParentState());
+            } else {
+                observer.playSound(SoundTypes.BLOCK_ANVIL_LAND, observer.getLocation().getPosition(), 0.5);
+                observer.closeInventory(HUIPlugin.getInstance().getGenericCause());
+                observer.sendMessage(Text.of(TextColors.RED, "Impossible back action, closing broken state."));
             }
-        }else{
+        } else {
             //normal state change
             //observer.closeInventory(HuskyCrates.instance.genericCause);
 
-            gui.openState(observer,goalState);
+            gui.openState(observer, goalState);
         }
+    }
+
+    public HuskyUI getGui() {
+        return gui;
+    }
+
+    public Player getObserver() {
+        return observer;
+    }
+
+    public String getGoalState() {
+        return goalState;
+    }
+
+    public boolean isBackAction() {
+        return isBackAction;
+    }
+
+    public boolean isCloseAction() {
+        return isCloseAction;
     }
 }

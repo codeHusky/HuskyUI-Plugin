@@ -21,7 +21,8 @@ import java.util.ArrayList;
  */
 public class AutoPage extends Page {
     private ArrayList<Element> autoElements = new ArrayList<>();
-    public boolean centered = false;
+    private boolean centered = false;
+
     public AutoPage(String id) {
         super(id);
         fillEmptyWithItem = true;
@@ -43,7 +44,7 @@ public class AutoPage extends Page {
         //autoElements.add(element);
     }
 
-    public void addElement(Element element){
+    public void addElement(Element element) {
         autoElements.add(element);
     }
 
@@ -54,49 +55,49 @@ public class AutoPage extends Page {
             System.out.println(height);
             cratePage.setInventoryDimension(InventoryDimension.of(9,height + 1));
          */
-        int rowsToDisplay = (int)Math.ceil(((double) autoElements.size())/9d);
-        inventoryDimension = InventoryDimension.of(9,( rowsToDisplay+ 1));
+        int rowsToDisplay = (int) Math.ceil(((double) autoElements.size()) / 9d);
+        inventoryDimension = InventoryDimension.of(9, (rowsToDisplay + 1));
         Inventory ourInventory = Inventory.builder()
-                .property(InventoryDimension.PROPERTY_NAME,inventoryDimension)
-                .listener(InteractInventoryEvent.class, evt ->{
-                    if(!(evt instanceof InteractInventoryEvent.Open) && !(evt instanceof  InteractInventoryEvent.Close)){
+                .property(InventoryDimension.PROPERTY_NAME, inventoryDimension)
+                .listener(InteractInventoryEvent.class, evt -> {
+                    if (!(evt instanceof InteractInventoryEvent.Open) && !(evt instanceof InteractInventoryEvent.Close)) {
                         evt.setCancelled(true);
                         //clickable
-                        if(evt.getCursorTransaction().getDefault().getType() != ItemTypes.AIR) {
-                            if(evt.getCursorTransaction().getDefault().toContainer().get(DataQuery.of("UnsafeData","slotnum")).isPresent()) {
+                        if (evt.getCursorTransaction().getDefault().getType() != ItemTypes.AIR) {
+                            if (evt.getCursorTransaction().getDefault().toContainer().get(DataQuery.of("UnsafeData", "slotnum")).isPresent()) {
                                 int slotnum = (int) evt.getCursorTransaction().getDefault().toContainer().get(DataQuery.of("UnsafeData", "slotnum")).get();
-                                if(slotnum == -1){
+                                if (slotnum == -1) {
                                     //back
-                                    ui.openState(observer,parentState);
-                                }else if (autoElements.get(slotnum) instanceof ActionElement) {
-                                    ((ActionElement) autoElements.get(slotnum)).runAction(id);
+                                    getUi().openState(getObserver(), getParentState());
+                                } else if (autoElements.get(slotnum) instanceof ActionElement) {
+                                    ((ActionElement) autoElements.get(slotnum)).runAction(getId());
                                 }
                             }
                         }
                     }
                 })
-                .property(InventoryTitle.PROPERTY_NAME,InventoryTitle.of(title))
-                .build(HUIPlugin.instance);
+                .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(title))
+                .build(HUIPlugin.getInstance());
         int slotNum = 0;
-        for(Inventory slot : ourInventory.slots()){
-            if(autoElements.size() > slotNum){
-                if(centered && (slotNum >= ((rowsToDisplay-1)*9))){
-                    if(autoElements.size()%2 == 1){//odd
-                        int width = autoElements.size()%9;
+        for (Inventory slot : ourInventory.slots()) {
+            if (autoElements.size() > slotNum) {
+                if (centered && (slotNum >= ((rowsToDisplay - 1) * 9))) {
+                    if (autoElements.size() % 2 == 1) {//odd
+                        int width = autoElements.size() % 9;
                     }
                 }
                 ItemStack orig = autoElements.get(slotNum).getDisplayItem();
-                ItemStack modifiedStack = ItemStack.builder().fromContainer(orig.toContainer().set(DataQuery.of("UnsafeData","slotnum"),slotNum)).build();
+                ItemStack modifiedStack = ItemStack.builder().fromContainer(orig.toContainer().set(DataQuery.of("UnsafeData", "slotnum"), slotNum)).build();
                 slot.set(modifiedStack);
-            }else if(slotNum > (rowsToDisplay*9)-1){
+            } else if (slotNum > (rowsToDisplay * 9) - 1) {
 
-                if(slotNum == rowsToDisplay*9+4){
+                if (slotNum == rowsToDisplay * 9 + 4) {
 
 
-                    ItemStack orig = ItemStack.builder().itemType(ItemTypes.BARRIER).add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE,"Back")).build();
-                    ItemStack modifiedStack = ItemStack.builder().fromContainer(orig.toContainer().set(DataQuery.of("UnsafeData","slotnum"),-1)).build();
+                    ItemStack orig = ItemStack.builder().itemType(ItemTypes.BARRIER).add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, "Back")).build();
+                    ItemStack modifiedStack = ItemStack.builder().fromContainer(orig.toContainer().set(DataQuery.of("UnsafeData", "slotnum"), -1)).build();
                     slot.set(modifiedStack);
-                }else if(fillEmptyWithItem){
+                } else if (fillEmptyWithItem) {
                     slot.set(empty);
                 }
             }

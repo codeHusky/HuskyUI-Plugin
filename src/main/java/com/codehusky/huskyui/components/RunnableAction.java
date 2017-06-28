@@ -14,11 +14,16 @@ public class RunnableAction extends Action {
         super(gui, observer, isCloseAction, isBackAction, goalState);
     }
 
-    public void setRunnable(UIRunnable runnable){
+    public UIRunnable getRunnable() {
+        return runnable;
+    }
+
+    public void setRunnable(UIRunnable runnable) {
         this.runnable = runnable;
     }
+
     @Override
-    public void runAction(String currentState){
+    public void runAction(String currentState) {
         runnable.run(this);
     }
 }

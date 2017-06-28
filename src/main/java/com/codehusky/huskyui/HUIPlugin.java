@@ -15,23 +15,32 @@ import javax.inject.Inject;
 /**
  * Created by lokio on 6/27/2017.
  */
-@Plugin(id="huskyui",name="HuskyUI",version = "0.1.0",description = "A UI framework.")
+@Plugin(id = "huskyui", name = "HuskyUI", version = "0.1.0", description = "A UI framework.")
 public class HUIPlugin {
-    public static HUIPlugin instance;
+    private static HUIPlugin instance;
 
-    @Inject
-    public PluginContainer pC;
-    public Logger logger;
-    public Cause genericCause;
+    @Inject private PluginContainer pC;
+    @Inject private Logger logger;
+
+    private Cause genericCause;
+
     @Listener
-    public void preinit(GamePreInitializationEvent event){
+    public void preInit(GamePreInitializationEvent event) {
         instance = this;
-        logger = LoggerFactory.getLogger(pC.getName());
         logger.info("HuskyUI is loaded and installed.");
     }
+
     @Listener
-    public void gameStart(GameStartedServerEvent event){
+    public void gameStart(GameStartedServerEvent event) {
         logger.info("HuskyUI is now running.");
-        genericCause = Cause.of(NamedCause.of("PluginContainer",pC));
+        genericCause = Cause.builder().owner(pC).build();
+    }
+
+    public static HUIPlugin getInstance() {
+        return instance;
+    }
+
+    public Cause getGenericCause() {
+        return genericCause;
     }
 }

@@ -8,12 +8,15 @@ import com.codehusky.huskyui.components.inventory.Element;
  */
 public class ActionElement extends Element {
     private Action action;
-    public void runAction(String currentPage){
+
+    public void runAction(String currentPage) {
         action.runAction(currentPage);
     }
-    public void setAction(Action action){
+
+    public void setAction(Action action) {
         this.action = action;
     }
+
     public Action getAction() {
         return action;
     }
