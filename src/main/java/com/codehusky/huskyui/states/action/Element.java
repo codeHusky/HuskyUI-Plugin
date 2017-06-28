@@ -17,6 +17,7 @@
 
 package com.codehusky.huskyui.states.action;
 
+import com.codehusky.huskyui.states.StateContainer;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
@@ -33,7 +34,8 @@ public class Element {
         return this.item;
     }
 
-    public static Element of(@Nonnull final ItemStack item) {
-        return new Element(item);
+    @Nonnull
+    public Element copy(@Nonnull final StateContainer newContainer) { // We don't use this on purpose.
+        return new Element(this.item.copy());
     }
 }

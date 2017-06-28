@@ -186,6 +186,31 @@ public class Page extends State {
         return inventory;
     }
 
+    @Nonnull
+    @Override
+    public Page copy(@Nonnull final StateContainer newContainer) {
+        final PageBuilder builder = builder();
+
+        for (final Map.Entry<Integer, Element> entry : this.elements.entrySet()) {
+            builder.putElement(entry.getKey(), entry.getValue().copy(newContainer));
+        }
+
+        builder.setInventoryDimension(this.inventoryDimension); // InventoryDimension is Immutable.
+        builder.setTitle(this.title.toBuilder().build());
+        builder.setEmptyStack(this.emptyStack.copy());
+        builder.setFillWhenEmpty(this.fillWhenEmpty);
+        builder.setAutoPaging(this.autoPaging);
+        builder.setCentered(this.centered);
+
+        final Page page = builder.build(this.id);
+
+        page.setContainer(newContainer);
+        page.setObserver(this.getObserver());
+        page.setParent(this.getParent());
+
+        return page;
+    }
+
     public static PageBuilder builder() {
         return new PageBuilder();
     }
