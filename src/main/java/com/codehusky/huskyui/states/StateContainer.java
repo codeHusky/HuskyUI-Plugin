@@ -20,6 +20,7 @@ package com.codehusky.huskyui.states;
 import com.codehusky.huskyui.HuskyUI;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -34,10 +35,20 @@ import java.util.Map;
 public class StateContainer {
 
     @Nonnull private final Map<String, State> states;
-    private String initialState = null;
+    @Nullable private String initialState;
 
     public StateContainer() {
-        this.states = Maps.newHashMap();
+        this(Maps.newHashMap());
+    }
+
+    public StateContainer(@Nonnull final Map<String, State> states) {
+        this.states = states;
+        this.initialState = null;
+    }
+
+    public StateContainer(@Nonnull final Map<String, State> states, @Nonnull final String initialState) {
+        this.states = states;
+        this.initialState = initialState;
     }
 
     @Nonnull
@@ -65,11 +76,17 @@ public class StateContainer {
     }
 
     public void removeState(@Nonnull final String id) {
+        if (this.initialState != null && this.initialState.equals(id)) {
+            this.initialState = null;
+        }
+
         this.states.remove(id);
     }
 
     public void removeState(@Nonnull final State state) {
-        this.states.values().remove(state);
+        if (this.hasState(state.getId())) {
+            this.removeState(state.getId());
+        }
     }
 
     public void setInitialState(@Nonnull final State state) {
@@ -108,6 +125,21 @@ public class StateContainer {
         }
 
         this.openState(player, this.initialState);
+    }
+
+    @Nonnull
+    public StateContainer copy() {
+        final StateContainer container = new StateContainer();
+
+        for (final State state : this.states.values()) {
+            container.addState(state.copy(container));
+        }
+
+        if (this.initialState != null) {
+            container.setInitialState(states.get(this.initialState));
+        }
+
+        return container;
     }
 
     private static void fail(@Nonnull final Player player, @Nonnull final String message) {

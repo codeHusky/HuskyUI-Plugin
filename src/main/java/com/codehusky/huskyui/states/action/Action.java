@@ -87,4 +87,9 @@ public class Action {
             this.container.openState(this.observer, this.goalState);
         }
     }
+
+    @Nonnull
+    public Action copy(@Nonnull final StateContainer newContainer) {
+        return new Action(newContainer, this.observer, this.type, this.goalState);
+    }
 }

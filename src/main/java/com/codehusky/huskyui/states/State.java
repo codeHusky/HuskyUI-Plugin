@@ -77,4 +77,15 @@ public class State {
     public void setObserver(@Nonnull final Player observer) {
         this.observer = observer;
     }
+
+    @Nonnull
+    public State copy(@Nonnull final StateContainer newContainer) {
+        final State state = new State(this.id);
+
+        state.setContainer(newContainer);
+        state.setObserver(this.observer);
+        state.setParent(this.parent);
+
+        return state;
+    }
 }

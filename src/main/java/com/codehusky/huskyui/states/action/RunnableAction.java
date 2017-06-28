@@ -61,4 +61,11 @@ public class RunnableAction extends Action {
             this.getObserver().sendMessage(Text.of(TextColors.RED, "Cannot run a null action!"));
         }
     }
+
+    @Nonnull
+    @Override
+    public RunnableAction copy(@Nonnull final StateContainer newContainer) {
+        // UIRunnable doesn't need to be copied - it's just an action.
+        return new RunnableAction(newContainer, this.getObserver(), this.getType(), this.getGoalState(), this.runnable);
+    }
 }

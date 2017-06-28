@@ -17,6 +17,7 @@
 
 package com.codehusky.huskyui.states.action;
 
+import com.codehusky.huskyui.states.StateContainer;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
@@ -35,7 +36,9 @@ public class ActionableElement extends Element {
         return this.action;
     }
 
-    public static ActionableElement of(@Nonnull final Action action, @Nonnull final ItemStack item) {
-        return new ActionableElement(action, item);
+    @Nonnull
+    @Override
+    public ActionableElement copy(@Nonnull final StateContainer newContainer) {
+        return new ActionableElement(this.action.copy(newContainer), this.getItem().copy());
     }
 }

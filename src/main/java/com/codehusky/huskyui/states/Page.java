@@ -43,7 +43,7 @@ import java.util.Map;
  */
 public class Page extends State {
 
-    public static ItemStack defaultEmptyStack = ItemStack.builder()
+    @Nonnull public static ItemStack defaultEmptyStack = ItemStack.builder()
             .itemType(ItemTypes.STAINED_GLASS_PANE)
             .add(Keys.DYE_COLOR, DyeColors.BLACK)
             .add(Keys.DISPLAY_NAME, Text.of(TextColors.DARK_GRAY, "HuskyUI")).build();
@@ -186,6 +186,31 @@ public class Page extends State {
         return inventory;
     }
 
+    @Nonnull
+    @Override
+    public Page copy(@Nonnull final StateContainer newContainer) {
+        final PageBuilder builder = builder();
+
+        for (final Map.Entry<Integer, Element> entry : this.elements.entrySet()) {
+            builder.putElement(entry.getKey(), entry.getValue().copy(newContainer));
+        }
+
+        builder.setInventoryDimension(this.inventoryDimension); // InventoryDimension is Immutable.
+        builder.setTitle(this.title); // Text is Immutable
+        builder.setEmptyStack(this.emptyStack.copy());
+        builder.setFillWhenEmpty(this.fillWhenEmpty);
+        builder.setAutoPaging(this.autoPaging);
+        builder.setCentered(this.centered);
+
+        final Page page = builder.build(this.id);
+
+        page.setContainer(newContainer);
+        page.setObserver(this.getObserver());
+        page.setParent(this.getParent());
+
+        return page;
+    }
+
     public static PageBuilder builder() {
         return new PageBuilder();
     }
@@ -260,7 +285,8 @@ public class Page extends State {
             final int rows = (int) Math.ceil(((double) this.elements.size()) / 9d);
             return new Page(id,
                     this.elements,
-                    (this.autoPaging ? InventoryDimension.of(9, rows + 1) : this.inventoryDimension),
+                    (this.autoPaging ? InventoryDimension.of(9, rows + 1) : this.inventoryDimension != null ?
+                            this.inventoryDimension : InventoryDimension.of(9, rows + 1)),
                     this.title,
                     this.emptyStack,
                     this.fillWhenEmpty,
