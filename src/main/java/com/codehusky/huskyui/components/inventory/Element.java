@@ -8,10 +8,12 @@ import org.spongepowered.api.item.inventory.ItemStack;
  * Elements do nothing by themselves, acting like a static, unmovable object.
  */
 public class Element {
-    private ItemStack displayItem = ItemStack.of(ItemTypes.AIR,1);
+    private ItemStack displayItem = ItemStack.of(ItemTypes.AIR, 1);
+
     public void setDisplayItem(ItemStack item) {
         displayItem = item;
     }
+
     public ItemStack getDisplayItem() {
         return displayItem;
     }
