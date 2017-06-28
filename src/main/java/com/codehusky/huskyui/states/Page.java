@@ -196,7 +196,7 @@ public class Page extends State {
         }
 
         builder.setInventoryDimension(this.inventoryDimension); // InventoryDimension is Immutable.
-        builder.setTitle(this.title.toBuilder().build());
+        builder.setTitle(this.title); // Text is Immutable
         builder.setEmptyStack(this.emptyStack.copy());
         builder.setFillWhenEmpty(this.fillWhenEmpty);
         builder.setAutoPaging(this.autoPaging);
