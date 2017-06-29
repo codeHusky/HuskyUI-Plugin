@@ -23,6 +23,7 @@ import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -31,10 +32,14 @@ import javax.annotation.Nonnull;
  */
 public class Action {
 
-    @Nonnull private final StateContainer container;
-    @Nonnull private final Player observer;
-    @Nonnull private final ActionType type;
-    @Nonnull private final String goalState;
+    @Nonnull
+    private final StateContainer container;
+    @Nonnull
+    private final Player observer;
+    @Nonnull
+    private final ActionType type;
+    @Nonnull
+    private final String goalState;
 
     public Action(@Nonnull final StateContainer container,
                   @Nonnull final Player observer,
@@ -67,24 +72,24 @@ public class Action {
     }
 
     public void runAction(@Nonnull final String currentState) {
-        if (this.type == ActionType.CLOSE) {
-            this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
-        } else if (this.type == ActionType.BACK) {
-            if (this.container.hasState(currentState)) {
-                if (this.container.getState(currentState).hasParent()) {
-                    this.container.openState(this.observer, this.container.getState(currentState).getParent());
-                } else {
-                    this.observer.playSound(SoundTypes.BLOCK_ANVIL_LAND, this.observer.getLocation().getPosition(), 0.5);
-                    this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
-                    this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
+        switch (this.type) {
+            case CLOSE:
+                this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
+                break;
+            case BACK:
+                if (this.container.hasState(currentState)) {
+                    if (this.container.getState(currentState).hasParent()) {
+                        this.container.openState(this.observer, this.container.getState(currentState).getParent());
+                    } else {
+                        this.observer.playSound(SoundTypes.BLOCK_ANVIL_LAND, this.observer.getLocation().getPosition(), 0.5);
+                        this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
+                        this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
+                    }
                 }
-            } else {
-                this.observer.sendMessage(Text.of(TextColors.RED, "Cannot travel non-existent state."));
-                this.observer.sendMessage(Text.of(TextColors.RED, "Invalid ID: " + currentState));
-            }
-        } else {
-            // ActionType == ActionType.NORMAL
-            this.container.openState(this.observer, this.goalState);
+                break;
+            case NORMAL:
+                this.container.openState(this.observer, this.goalState);
+                break;
         }
     }
 
