@@ -151,18 +151,18 @@ public class Page extends State {
         for (final Inventory slot : inventory.slots()) {
             if (this.autoPaging) {
                 if (this.elements.size() > num) {
-                    if (this.centered && (num >= ((this.rows - 1) * 9))) {
+                    /*if (this.centered && (num >= ((this.rows - 1) * 9))) {
                         if (this.elements.size() %2 == 1) {
                             // TODO: This seems to be unused?
                             // Yes it is. Indev stuff.
                             int width = this.elements.size() % 9;
                         }
-                    }
+                    }*/
 
                     slot.set(ItemStack.builder()
                             .fromContainer(this.elements.get(num).getItem()
                                     .toContainer()
-                                    .set(DataQuery.of("UnsafeData", "slotnum"), -1))
+                                    .set(DataQuery.of("UnsafeData", "slotnum"), num))
                             .build());
                 } else if (num > (this.rows * 9) - 1) {
                     if (num == (this.rows * 9) + 4) {
@@ -174,16 +174,18 @@ public class Page extends State {
                                         .toContainer()
                                         .set(DataQuery.of("UnsafeData", "slotnum"), -1))
                                 .build());
+                    }else{
+                        slot.set(emptyStack);
                     }
                 }
-            } else {
-                slot.set(!this.elements.containsKey(num) ? ((fillWhenEmpty)?this.emptyStack:ItemStack.of(ItemTypes.AIR,1)) : ItemStack.builder()
-                        .fromContainer(this.elements.get(num).getItem()
-                                .toContainer()
+            } else if(elements.containsKey(num)){
+                slot.set(ItemStack.builder()
+                        .fromContainer(elements.get(num).getItem().toContainer()
                                 .set(DataQuery.of("UnsafeData", "slotnum"), num))
                         .build());
-                num++;
+                //standard situations
             }
+            num++;
         }
 
         return inventory;
