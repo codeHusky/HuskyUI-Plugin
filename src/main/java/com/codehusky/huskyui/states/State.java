@@ -80,23 +80,15 @@ public class State {
         this.observer = observer;
     }
 
-    public State withParent(final String parent){
-        final State parentified = this.copy();
-        parentified.setParent(parent);
-        return parentified;
-    }
 
     @Nonnull
     public State copy(@Nonnull final StateContainer newContainer) {
-        final State withContainer = this.copy();
-        withContainer.setContainer(newContainer);
-        return withContainer;
-    }
-    @Nonnull
-    public State copy(){
         final State state = new State(this.id);
+
+        state.setContainer(newContainer);
         state.setObserver(this.observer);
         state.setParent(this.parent);
+
         return state;
     }
 }
