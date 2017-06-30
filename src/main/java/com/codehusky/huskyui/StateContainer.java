@@ -103,6 +103,7 @@ public class StateContainer {
         if (state == null) {
             fail(player, "Attempted to open a nonexistent state!");
             fail(player, "Invalid ID: " + id);
+            player.closeInventory(HuskyUI.getInstance().getGenericCause());
             return;
         }
 
