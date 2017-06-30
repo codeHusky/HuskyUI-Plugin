@@ -32,21 +32,11 @@ import javax.annotation.Nonnull;
  */
 public class Action {
 
-<<<<<<< Updated upstream
-    @Nonnull
-    private final StateContainer container;
-    @Nonnull
-    private final Player observer;
-    @Nonnull
-    private final ActionType type;
-    @Nonnull
-    private final String goalState;
-=======
+
     @Nonnull private final StateContainer container;
     private Player observer = null;
     @Nonnull private final ActionType type;
     @Nonnull private final String goalState;
->>>>>>> Stashed changes
 
     public Action(@Nonnull final StateContainer container,
                   @Nonnull final ActionType type,
@@ -97,20 +87,10 @@ public class Action {
                         this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
                     }
                 }
-<<<<<<< Updated upstream
                 break;
             case NORMAL:
                 this.container.openState(this.observer, this.goalState);
                 break;
-=======
-            } else {
-                this.observer.sendMessage(Text.of(TextColors.RED, "Cannot travel non-existent state."));
-                this.observer.sendMessage(Text.of(TextColors.RED, "Invalid ID: " + currentState));
-            }
-        } else {
-            //
-            this.container.openState(this.observer, this.goalState);
->>>>>>> Stashed changes
         }
     }
 
