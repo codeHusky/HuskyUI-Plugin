@@ -20,7 +20,6 @@ package com.codehusky.huskyui.states.action.runnable;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.action.Action;
 import com.codehusky.huskyui.states.action.ActionType;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import javax.annotation.Nonnull;

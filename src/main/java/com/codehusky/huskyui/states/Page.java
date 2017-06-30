@@ -178,13 +178,13 @@ public class Page extends State {
                         slot.set(emptyStack);
                     }
                 }
-            } else if(elements.containsKey(num)){
+            } else if (elements.containsKey(num)) { // Standard Situations
                 slot.set(ItemStack.builder()
                         .fromContainer(elements.get(num).getItem().toContainer()
                                 .set(DataQuery.of("UnsafeData", "slotnum"), num))
                         .build());
-                //standard situations
             }
+
             num++;
         }
 
@@ -192,10 +192,14 @@ public class Page extends State {
     }
 
     @Override
-    public void setObserver(Player observer) {
-        if(observer == null) return;
+    public void setObserver(final Player observer) {
+        if(observer == null) {
+            return;
+        }
+
         super.setObserver(observer);
-        for(Element e : elements.values()){
+
+        for(final Element e : elements.values()){
             if(e instanceof ActionableElement){
                 ((ActionableElement)e).getAction().setObserver(observer);
             }

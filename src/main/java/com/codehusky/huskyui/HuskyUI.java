@@ -64,7 +64,7 @@ public class HuskyUI {
     }
 
     @Listener
-    public void gameStart(@Nonnull final GameStartedServerEvent event) {
+    public void onGameStartedServer(@Nonnull final GameStartedServerEvent event) {
         this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
     }
 

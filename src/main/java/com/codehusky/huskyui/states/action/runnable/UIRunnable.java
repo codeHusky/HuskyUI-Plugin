@@ -17,7 +17,6 @@
 
 package com.codehusky.huskyui.states.action.runnable;
 
-
 import javax.annotation.Nonnull;
 
 public interface UIRunnable {

@@ -32,7 +32,6 @@ import javax.annotation.Nonnull;
  */
 public class Action {
 
-
     @Nonnull private final StateContainer container;
     private Player observer = null;
     @Nonnull private final ActionType type;
@@ -45,9 +44,6 @@ public class Action {
         this.type = type;
         this.goalState = goalState;
     }
-
-
-
 
     @Nonnull
     public StateContainer getContainer() {

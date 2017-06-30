@@ -76,10 +76,9 @@ public class State {
         return this.observer != null;
     }
 
-    public void setObserver(@Nonnull final Player observer) {
+    public void setObserver(final Player observer) {
         this.observer = observer;
     }
-
 
     @Nonnull
     public State copy(@Nonnull final StateContainer newContainer) {
