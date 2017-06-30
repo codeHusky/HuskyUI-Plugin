@@ -18,11 +18,13 @@
 package com.codehusky.huskyui.states;
 
 import com.codehusky.huskyui.HuskyUI;
-import com.codehusky.huskyui.states.action.Element;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.element.Element;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -31,7 +33,7 @@ import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import com.codehusky.huskyui.states.action.ActionableElement;
+import com.codehusky.huskyui.states.element.ActionableElement;
 import org.spongepowered.api.text.format.TextStyles;
 
 import javax.annotation.Nonnull;
@@ -152,6 +154,7 @@ public class Page extends State {
                     if (this.centered && (num >= ((this.rows - 1) * 9))) {
                         if (this.elements.size() %2 == 1) {
                             // TODO: This seems to be unused?
+                            // Yes it is. Indev stuff.
                             int width = this.elements.size() % 9;
                         }
                     }
@@ -174,7 +177,7 @@ public class Page extends State {
                     }
                 }
             } else {
-                slot.set(!this.elements.containsKey(num) ? this.emptyStack : ItemStack.builder()
+                slot.set(!this.elements.containsKey(num) ? ((fillWhenEmpty)?this.emptyStack:ItemStack.of(ItemTypes.AIR,1)) : ItemStack.builder()
                         .fromContainer(this.elements.get(num).getItem()
                                 .toContainer()
                                 .set(DataQuery.of("UnsafeData", "slotnum"), num))
@@ -184,6 +187,17 @@ public class Page extends State {
         }
 
         return inventory;
+    }
+
+    @Override
+    public void setObserver(Player observer) {
+        if(observer == null) return;
+        super.setObserver(observer);
+        for(Element e : elements.values()){
+            if(e instanceof ActionableElement){
+                ((ActionableElement)e).getAction().setObserver(observer);
+            }
+        }
     }
 
     @Nonnull

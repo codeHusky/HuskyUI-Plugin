@@ -18,7 +18,7 @@
 package com.codehusky.huskyui.states.action;
 
 import com.codehusky.huskyui.HuskyUI;
-import com.codehusky.huskyui.states.StateContainer;
+import com.codehusky.huskyui.StateContainer;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
  */
 public class Action {
 
+<<<<<<< Updated upstream
     @Nonnull
     private final StateContainer container;
     @Nonnull
@@ -40,25 +41,35 @@ public class Action {
     private final ActionType type;
     @Nonnull
     private final String goalState;
+=======
+    @Nonnull private final StateContainer container;
+    private Player observer = null;
+    @Nonnull private final ActionType type;
+    @Nonnull private final String goalState;
+>>>>>>> Stashed changes
 
     public Action(@Nonnull final StateContainer container,
-                  @Nonnull final Player observer,
                   @Nonnull final ActionType type,
                   @Nonnull final String goalState) {
         this.container = container;
-        this.observer = observer;
         this.type = type;
         this.goalState = goalState;
     }
+
+
+
 
     @Nonnull
     public StateContainer getContainer() {
         return this.container;
     }
 
-    @Nonnull
     public Player getObserver() {
         return this.observer;
+    }
+
+    public void setObserver(Player observer) {
+        this.observer = observer;
     }
 
     @Nonnull
@@ -86,15 +97,25 @@ public class Action {
                         this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
                     }
                 }
+<<<<<<< Updated upstream
                 break;
             case NORMAL:
                 this.container.openState(this.observer, this.goalState);
                 break;
+=======
+            } else {
+                this.observer.sendMessage(Text.of(TextColors.RED, "Cannot travel non-existent state."));
+                this.observer.sendMessage(Text.of(TextColors.RED, "Invalid ID: " + currentState));
+            }
+        } else {
+            //
+            this.container.openState(this.observer, this.goalState);
+>>>>>>> Stashed changes
         }
     }
 
     @Nonnull
     public Action copy(@Nonnull final StateContainer newContainer) {
-        return new Action(newContainer, this.observer, this.type, this.goalState);
+        return new Action(newContainer, this.type, this.goalState);
     }
 }

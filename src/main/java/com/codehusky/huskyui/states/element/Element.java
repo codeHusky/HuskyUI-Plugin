@@ -15,11 +15,27 @@
  * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.states.action;
+package com.codehusky.huskyui.states.element;
 
+import com.codehusky.huskyui.StateContainer;
+import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
-public interface UIRunnable {
+public class Element {
 
-    void run(@Nonnull final RunnableAction context);
+    @Nonnull private final ItemStack item;
+
+    public Element(@Nonnull final ItemStack item) {
+        this.item = item;
+    }
+
+    @Nonnull
+    public ItemStack getItem() {
+        return this.item;
+    }
+
+    @Nonnull
+    public Element copy(@Nonnull final StateContainer newContainer) { // We don't use this on purpose.
+        return new Element(this.item.copy());
+    }
 }

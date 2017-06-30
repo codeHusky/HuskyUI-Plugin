@@ -15,9 +15,10 @@
  * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.states.action;
+package com.codehusky.huskyui.states.element;
 
-import com.codehusky.huskyui.states.StateContainer;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.action.Action;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 

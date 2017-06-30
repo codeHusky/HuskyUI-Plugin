@@ -15,12 +15,12 @@
  * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.states;
+package com.codehusky.huskyui;
 
-import com.codehusky.huskyui.HuskyUI;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.State;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -98,7 +98,7 @@ public class StateContainer {
     }
 
     public void openState(@Nonnull final Player player, @Nonnull final String id) {
-        final State state = this.states.get(id);
+        final State state = this.copy().states.get(id);
 
         if (state == null) {
             fail(player, "Attempted to open a nonexistent state!");

@@ -21,5 +21,6 @@ public enum ActionType {
 
     BACK,
     CLOSE,
-    NORMAL
+    NORMAL,
+    NONE
 }

@@ -17,6 +17,7 @@
 
 package com.codehusky.huskyui.states;
 
+import com.codehusky.huskyui.StateContainer;
 import org.spongepowered.api.entity.living.player.Player;
 import javax.annotation.Nonnull;
 
@@ -50,7 +51,8 @@ public class State {
         return this.parent != null;
     }
 
-    public void setParent(@Nonnull final String parent) {
+    public void setParent(final String parent) {
+        if(parent == null) return;
         this.parent = parent;
     }
 
