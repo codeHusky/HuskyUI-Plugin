@@ -56,13 +56,6 @@ public class Page extends State {
             .add(Keys.DISPLAY_NAME, Text.of(TextColors.DARK_GRAY, "HuskyUI")).build();
 
     /**
-     * The ID for this Page which will be removed after I post these Javadocs
-     * because I just realized how fucking pointless it is that we do this
-     * when {@link State} already controls it lol were we high or something?
-     */
-    @Nonnull private final String id;
-
-    /**
      * The {@link Element}s that will be used by this Page.
      *
      * <p>Elements are sorted by integer, ostensibly referring
@@ -139,7 +132,7 @@ public class Page extends State {
                 final boolean autoPaging,
                 final boolean centered,
                 final int rows) {
-        this.id = id;
+        super(id);
         this.elements = elements;
         this.inventoryDimension = inventoryDimension;
         this.title = title;
@@ -148,16 +141,6 @@ public class Page extends State {
         this.autoPaging = autoPaging;
         this.centered = centered;
         this.rows = rows;
-    }
-
-    /**
-     * lolol I'll be removing this in a second hi Loki how are you doing?
-     *
-     * @return the luldata that won't exist about 4 seconds after this push
-     */
-    @Nonnull
-    public String getId() {
-        return this.id;
     }
 
     /**
@@ -254,11 +237,11 @@ public class Page extends State {
                                             this.getObserver().closeInventory(HuskyUI.getInstance().getGenericCause());
                                         }
                                     } else if (this.elements.get(num) instanceof ActionableElement) {
-                                        ((ActionableElement) this.elements.get(num)).getAction().runAction(this.id);
+                                        ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
                                     }
                                 } else {
                                     if (this.elements.get(num) instanceof ActionableElement) {
-                                        ((ActionableElement) this.elements.get(num)).getAction().runAction(this.id);
+                                        ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
                                     }
                                 }
                             });
@@ -358,7 +341,7 @@ public class Page extends State {
         builder.setAutoPaging(this.autoPaging);
         builder.setCentered(this.centered);
 
-        final Page page = builder.build(this.id);
+        final Page page = builder.build(this.getId());
 
         page.setContainer(newContainer);
         page.setObserver(this.getObserver());
