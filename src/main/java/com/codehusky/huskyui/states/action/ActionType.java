@@ -17,10 +17,31 @@
 
 package com.codehusky.huskyui.states.action;
 
+/**
+ * The type of {@link Action} to be performed.
+ */
 public enum ActionType {
 
+    /**
+     * Triggered if a {@link org.spongepowered.api.entity.living.player.Player}
+     * is going "Back" to the parent.
+     */
     BACK,
+
+    /**
+     * Triggered if a {@link org.spongepowered.api.entity.living.player.Player}
+     * is closing the {@link org.spongepowered.api.item.inventory.Inventory}.
+     */
     CLOSE,
+
+    /**
+     * Triggered for a normal action, usually forward.
+     */
     NORMAL,
+
+    /**
+     * This is a false flag operation. We've been swindled!
+     * Quick, scramble the jets!
+     */
     NONE
 }

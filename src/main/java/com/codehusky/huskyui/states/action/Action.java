@@ -27,16 +27,41 @@ import org.spongepowered.api.text.format.TextColors;
 import javax.annotation.Nonnull;
 
 /**
- * This is something that the State handler will use in the occurrence that this is called to decide
- * where to move the current GUI Instance to.
+ * This class' purpose is to be used to determine the movement
+ * of a user within a GUI.
  */
 public class Action {
 
+    /**
+     * The {@link StateContainer} that is responsible for this Action.
+     */
     @Nonnull private final StateContainer container;
+
+    /**
+     * The {@link Player} observing the {@link com.codehusky.huskyui.states.Page}
+     * that this action is being performed on.
+     */
     private Player observer = null;
+
+    /**
+     * The type of Action taking place.
+     */
     @Nonnull private final ActionType type;
+
+    /**
+     * The intended {@link com.codehusky.huskyui.states.State} that the
+     * observer should find themselves in when this Action finishes.
+     */
     @Nonnull private final String goalState;
 
+    /**
+     * Constructs an Action.
+     *
+     * @param container the {@link StateContainer} that is responsible for this Action
+     * @param type the type of Action taking place
+     * @param goalState the intended {@link com.codehusky.huskyui.states.State}
+     *                  for the observer to land
+     */
     public Action(@Nonnull final StateContainer container,
                   @Nonnull final ActionType type,
                   @Nonnull final String goalState) {
@@ -45,29 +70,60 @@ public class Action {
         this.goalState = goalState;
     }
 
+    /**
+     * Gets the {@link StateContainer} that is responsible for this Action.
+     *
+     * @return the StateContainer responsible for this Action
+     */
     @Nonnull
     public StateContainer getContainer() {
         return this.container;
     }
 
+    /**
+     * The {@link Player} that is observing this Action.
+     *
+     * @return the Player observing this Action
+     */
     public Player getObserver() {
         return this.observer;
     }
 
+    /**
+     * Sets the {@link Player} that is observing this Action
+     *
+     * @param observer the Player that is observing this Action
+     */
     public void setObserver(Player observer) {
         this.observer = observer;
     }
 
+    /**
+     * Gets the type of Action to be performed.
+     *
+     * @return the type of Action to be performed
+     */
     @Nonnull
     public ActionType getType() {
         return this.type;
     }
 
+    /**
+     * Gets the intended {@link com.codehusky.huskyui.states.State} for
+     * the {@link Player} to end up in after this Action is performed.
+     *
+     * @return the intended State for the Player to end up in
+     */
     @Nonnull
     public String getGoalState() {
         return this.goalState;
     }
 
+    /**
+     * Performs this Action.
+     *
+     * @param currentState the current State before the Action is performed
+     */
     public void runAction(@Nonnull final String currentState) {
         switch (this.type) {
             case CLOSE:
@@ -93,6 +149,12 @@ public class Action {
         }
     }
 
+    /**
+     * Creates a copy of this Action.
+     *
+     * @param newContainer the new {@link StateContainer} to be responsible for this new Action
+     * @return a copy of this Action
+     */
     @Nonnull
     public Action copy(@Nonnull final StateContainer newContainer) {
         return new Action(newContainer, this.type, this.goalState);
