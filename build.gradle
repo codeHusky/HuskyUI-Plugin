@@ -1,0 +1,167 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.ninja.miserable:blossom:1.0.1"
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+        classpath "gradle.plugin.org.spongepowered:spongegradle:0.8.1"
+    }
+}
+
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "org.spongepowered.plugin"
+
+final String[] blossomLocations = ["src/main/java/com/codehusky/huskyui/HuskyUI.java"]
+final boolean doReplacements = blossomLocations.size() > 0
+if (doReplacements) {
+    apply plugin: "ninja.miserable.blossom"
+}
+
+group = "com.codehusky"
+version = "0.3.0-SNAPSHOT"
+archivesBaseName = "HuskyUI"
+
+final GitData gitData = getGitData()
+final SpongeData spongeData = getSpongeData()
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url = "http://repo.spongepowered.org/maven" }
+}
+
+dependencies {
+    compileOnly "org.spongepowered:spongeapi:6.0.0-20161223.142907-29"
+}
+
+jar {
+    manifest {
+        attributes(
+                "Built-By": System.properties['user.name'],
+                "Created-By": "${System.properties['java.vm.version']} (${System.properties['java.vm.vendor']})",
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Git-Branch": gitData.branch,
+                "Git-Commit-Long": gitData.hashLong,
+                "Git-Commit-Short": gitData.hashShort
+        )
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from javadoc.destinationDir
+}
+
+shadowJar {
+    classifier = "shaded"
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+    archives shadowJar
+}
+
+build {
+    dependsOn clean
+    dependsOn jar
+    dependsOn javadocJar
+    dependsOn sourcesJar
+    dependsOn shadowJar
+
+    jar.mustRunAfter clean
+    javadocJar.mustRunAfter jar
+    sourcesJar.mustRunAfter javadocJar
+    shadowJar.mustRunAfter sourcesJar
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+}
+
+if (doReplacements) {
+    blossom {
+        for (final String location : blossomLocations) {
+            // Sponge
+            replaceToken "@pluginVersion@", spongeData.version, location
+            replaceToken "@pluginId@", spongeData.id, location
+            replaceToken "@pluginDescription@", spongeData.description, location
+            replaceToken "@pluginName@", spongeData.name, location
+
+            // Git Data
+            replaceToken "@hashShort@", gitData.hashShort, location
+            replaceToken "@hashLong@", gitData.hashLong, location
+            replaceToken "@gitBranch@", gitData.branch, location
+        }
+    }
+}
+
+sponge {
+    plugin {
+        id = spongeData.id
+        meta {
+            name = spongeData.name
+            version = spongeData.version
+            description = spongeData.description
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "3.5"
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+private static GitData getGitData() {
+    final GitData data = new GitData()
+
+    data.hashShort = doGitQuery("--short HEAD")
+    data.hashLong = doGitQuery("HEAD")
+    data.branch = doGitQuery("--abbrev-ref HEAD")
+
+    return data
+}
+
+private static doGitQuery(final String query) {
+    def process = ("git rev-parse " + query).execute()
+    process.waitFor()
+    return process.exitValue() ? "unknown" : process.text.trim()
+}
+
+private SpongeData getSpongeData() {
+    final SpongeData data = new SpongeData()
+
+    data.id = project.name
+    data.version = project.version
+    data.name = archivesBaseName
+    data.description = "A simple, lightweight UI system for, as of right now, chest GUIs."
+
+    return data
+}
+
+class GitData {
+    String hashShort
+    String hashLong
+    String branch
+}
+
+class SpongeData {
+    String id
+    String version
+    String name
+    String description
+}

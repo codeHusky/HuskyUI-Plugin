@@ -37,23 +37,28 @@ import javax.inject.Inject;
  * data.</p>
  */
 @Plugin(id = HuskyUI.PLUGIN_ID, name = HuskyUI.PLUGIN_NAME, version = HuskyUI.PLUGIN_VERSION,
-        description = "A framework for Inventory UI.")
+        description = HuskyUI.PLUGIN_DESCRIPTION)
 public class HuskyUI {
 
     /**
      * The ID of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_ID = "huskyui";
+    public static final String PLUGIN_ID = "@pluginId@";
 
     /**
      * The Name of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_NAME = "HuskyUI";
+    public static final String PLUGIN_NAME = "@pluginName@";
 
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.2.1";
+    public static final String PLUGIN_VERSION = "@pluginVersion@";
+
+    /**
+     * The Description of HuskyUI for Sponge.
+     */
+    public static final String PLUGIN_DESCRIPTION = "@pluginDescription@";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
