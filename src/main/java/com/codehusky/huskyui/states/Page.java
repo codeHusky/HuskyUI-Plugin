@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.entity.living.monster.Husk;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
@@ -131,7 +132,11 @@ public class Page extends State {
                                 final int num = (int) slot;
                                 if (this.autoPaging) {
                                     if (num == -1) {
-                                        this.getContainer().openState(this.getObserver(), this.getParent());
+                                        if(hasParent()) {
+                                            this.getContainer().openState(this.getObserver(), this.getParent());
+                                        }else{
+                                            this.getObserver().closeInventory(HuskyUI.getInstance().getGenericCause());
+                                        }
                                     } else if (this.elements.get(num) instanceof ActionableElement) {
                                         ((ActionableElement) this.elements.get(num)).getAction().runAction(this.id);
                                     }
@@ -169,7 +174,7 @@ public class Page extends State {
                         slot.set(ItemStack.builder()
                                 .fromContainer(ItemStack.builder()
                                         .itemType(ItemTypes.BARRIER)
-                                        .add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, "Back"))
+                                        .add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, (hasParent())?"Back":"Close"))
                                         .build()
                                         .toContainer()
                                         .set(DataQuery.of("UnsafeData", "slotnum"), -1))

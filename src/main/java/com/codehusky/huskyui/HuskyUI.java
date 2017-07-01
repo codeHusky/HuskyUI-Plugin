@@ -35,7 +35,7 @@ public class HuskyUI {
 
     public static final String PLUGIN_ID = "huskyui";
     public static final String PLUGIN_NAME = "HuskyUI";
-    public static final String PLUGIN_VERSION = "0.2.0";
+    public static final String PLUGIN_VERSION = "0.2.1";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HuskyUI.class);
 
