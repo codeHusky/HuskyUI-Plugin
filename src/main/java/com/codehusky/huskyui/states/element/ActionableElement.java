@@ -22,21 +22,47 @@ import com.codehusky.huskyui.states.action.Action;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
+/**
+ * An extension of {@link Element} that also wraps
+ * an {@link Action} to be used, typically, by an event.
+ */
 public class ActionableElement extends Element {
 
+    /**
+     * The {@link Action} to be performed on
+     * on this Element.
+     */
     @Nonnull private Action action;
 
+    /**
+     * Constructs a new ActionableElement.
+     *
+     * @param action the {@link Action} to be performed
+     * @param item the {@link ItemStack} this {@link Element} wraps
+     */
     public ActionableElement(@Nonnull final Action action, @Nonnull final ItemStack item) {
         super(item);
 
         this.action = action;
     }
 
+    /**
+     * Gets the {@link Action} to be performed on this Element.
+     *
+     * @return the Action to be performed on this Element
+     */
     @Nonnull
     public Action getAction() {
         return this.action;
     }
 
+    /**
+     * Creates a copy of this ActionableElement.
+     *
+     * @param newContainer the {@link StateContainer} now
+     *                     responsible for this ActionableElement
+     * @return a copy of this ActionableElement
+     */
     @Nonnull
     @Override
     public ActionableElement copy(@Nonnull final StateContainer newContainer) {

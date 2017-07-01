@@ -41,26 +41,95 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * An inventory view state. Traditional crate gui view and such.
- * Generally, when making guis custom, overriding the inventory class is a good idea.
+ * An extension of {@link State}, intended to be used for
+ * chest-based GUIs.
  */
 public class Page extends State {
 
+    /**
+     * The default {@link ItemStack} to be used if no ItemStack is defined
+     * for a slot while {@link Page#fillWhenEmpty} is set to <code>true</code>.
+     */
     @Nonnull public static ItemStack defaultEmptyStack = ItemStack.builder()
             .itemType(ItemTypes.STAINED_GLASS_PANE)
             .add(Keys.DYE_COLOR, DyeColors.BLACK)
             .add(Keys.DISPLAY_NAME, Text.of(TextColors.DARK_GRAY, "HuskyUI")).build();
 
+    /**
+     * The ID for this Page which will be removed after I post these Javadocs
+     * because I just realized how fucking pointless it is that we do this
+     * when {@link State} already controls it lol were we high or something?
+     */
     @Nonnull private final String id;
+
+    /**
+     * The {@link Element}s that will be used by this Page.
+     *
+     * <p>Elements are sorted by integer, ostensibly referring
+     * to their placement in the chest.</p>
+     */
     @Nonnull private final Map<Integer, Element> elements;
+
+    /**
+     * The {@link InventoryDimension} is the space in which {@link Element}s
+     * will be placed when the inventory is opened by a {@link Player}.
+     */
     @Nonnull private final InventoryDimension inventoryDimension;
+
+    /**
+     * The name of the Chest to be opened, because IDs
+     * typically aren't very visually appealing.
+     */
     @Nonnull private final Text title;
+
+    /**
+     * The {@link ItemStack} to be used when {@link Page#fillWhenEmpty}
+     * is set to <code>true</code>. Usually this will be determined by
+     * {@link Page#defaultEmptyStack}.
+     */
     @Nonnull private final ItemStack emptyStack;
+
+    /**
+     * Whether or not to fill empty stacks with
+     * predetermined {@link ItemStack}s.
+     */
     private final boolean fillWhenEmpty;
+
+    /**
+     * Whether or not paging should be handled by HuskyUI
+     * or the implementing plugin.
+     */
     private final boolean autoPaging;
+
+    /**
+     * Whether or not to center the {@link ItemStack}.
+     *
+     * <p>Currently serves no purpose.</p>
+     */
     private final boolean centered;
+
+    /**
+     * The number of rows to appear within the {@link InventoryDimension}.
+     *
+     * <p>If {@link Page#autoPaging} is set to <code>true</code>, this value
+     * will be automatically determined based off of the number of items
+     * being digested by the Page.</p>
+     */
     private final int rows;
 
+    /**
+     * Constructs a Page.
+     *
+     * @param id the ID of the State this Page extends
+     * @param elements the {@link ItemStack}s in use by this Page
+     * @param inventoryDimension the virtual inventory this Page represents
+     * @param title the name of the chest
+     * @param emptyStack the ItemStack to be used if filling blank spaces
+     * @param fillWhenEmpty whether or not to fill blank spaces
+     * @param autoPaging whether or not to let HuskyUI handle paging
+     * @param centered whether or not to center ItemStacks
+     * @param rows the number of rows within the InventoryDimension
+     */
     public Page(@Nonnull final String id,
                 @Nonnull final Map<Integer, Element> elements,
                 @Nonnull final InventoryDimension inventoryDimension,
@@ -81,43 +150,90 @@ public class Page extends State {
         this.rows = rows;
     }
 
+    /**
+     * lolol I'll be removing this in a second hi Loki how are you doing?
+     *
+     * @return the luldata that won't exist about 4 seconds after this push
+     */
     @Nonnull
     public String getId() {
         return this.id;
     }
 
+    /**
+     * Gets the {@link ItemStack}s in use by this Page.
+     *
+     * @return the ItemSTacks in use by this Page
+     */
     @Nonnull
     public Map<Integer, Element> getElements() {
         return this.elements;
     }
 
+    /**
+     * Gets the virtual inventory this Page represents.
+     *
+     * @return the virtual inventory this Page represents
+     */
     @Nonnull
     public InventoryDimension getInventoryDimension() {
         return this.inventoryDimension;
     }
 
+    /**
+     * Gets the title of the chest this Page uses.
+     *
+     * @return the title of the chest
+     */
     @Nonnull
     public Text getTitle() {
         return this.title;
     }
 
+    /**
+     * Gets the {@link ItemStack} to use when an {@link Element}
+     * hasn't been given.
+     *
+     * @return the default ItemStack
+     */
     @Nonnull
     public ItemStack getEmptyStack() {
         return this.emptyStack;
     }
 
+    /**
+     * Determines whether or not HuskyUI is replacing non-specified
+     * {@link Element}s with a default {@link ItemStack}.
+     *
+     * @return true if filling empty Elements; false otherwise
+     */
     public boolean isFillWhenEmpty() {
         return this.fillWhenEmpty;
     }
 
+    /**
+     * Determines whether or not HuskyUI is handling paging.
+     *
+     * @return true if HuskyUI is handling paging; false otherwise
+     */
     public boolean isAutoPaging() {
         return this.autoPaging;
     }
 
+    /**
+     * Gets the number of rows in the {@link InventoryDimension}.
+     *
+     * @return the number of rows in the InventoryDimension
+     */
     public int getRows() {
         return this.rows;
     }
 
+    /**
+     * Generates the {@link Inventory} for this Page.
+     *
+     * @return the Inventory for this Page
+     */
     @Nonnull
     public Inventory generatePageView() {
         final Inventory inventory = Inventory.builder()
@@ -196,6 +312,14 @@ public class Page extends State {
         return inventory;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Additionally, assigns the {@link Player} to all
+     * {@link Element}s within this Page.</p>
+     *
+     * @param observer the Player viewing this State
+     */
     @Override
     public void setObserver(final Player observer) {
         if(observer == null) {
@@ -211,6 +335,13 @@ public class Page extends State {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @param newContainer the {@link StateContainer} that will be taking
+     *                     responsibility for this Page.
+     * @return a copy of this Page
+     */
     @Nonnull
     @Override
     public Page copy(@Nonnull final StateContainer newContainer) {
@@ -236,20 +367,70 @@ public class Page extends State {
         return page;
     }
 
+    /**
+     * Creates a new {@link PageBuilder}.
+     *
+     * @return a new PageBuilder
+     */
     public static PageBuilder builder() {
         return new PageBuilder();
     }
 
+    /**
+     * An easy-to-use class for quickly creating {@link Page}s.
+     */
     public static class PageBuilder {
 
+        /**
+         * The {@link Element}s that will be used by this Page.
+         *
+         * <p>Elements are sorted by integer, ostensibly referring
+         * to their placement in the chest.</p>
+         */
         @Nonnull private final Map<Integer, Element> elements;
+
+        /**
+         * The {@link InventoryDimension} is the space in which {@link Element}s
+         * will be placed when the inventory is opened by a {@link Player}.
+         */
         private InventoryDimension inventoryDimension;
+
+        /**
+         * The name of the Chest to be opened, because IDs
+         * typically aren't very visually appealing.
+         */
         private Text title;
+
+        /**
+         * The {@link ItemStack} to be used when {@link Page#fillWhenEmpty}
+         * is set to <code>true</code>. Usually this will be determined by
+         * {@link Page#defaultEmptyStack}.
+         */
         private ItemStack emptyStack;
+
+        /**
+         * Whether or not to fill empty stacks with
+         * predetermined {@link ItemStack}s.
+         */
         private boolean fillWhenEmpty;
+
+        /**
+         * Whether or not paging should be handled by HuskyUI
+         * or the implementing plugin.
+         */
         private boolean autoPaging;
+
+        /**
+         * Whether or not to center the {@link ItemStack}.
+         *
+         * <p>Currently serves no purpose.</p>
+         */
         private boolean centered;
 
+        /**
+         * Constructs a new {@link PageBuilder}, currently only
+         * accessible via {@link Page#builder()}.
+         */
         private PageBuilder() {
             this.elements = Maps.newHashMap();
             this.inventoryDimension = null;
@@ -260,52 +441,112 @@ public class Page extends State {
             this.centered = true;
         }
 
+        /**
+         * Puts an {@link Element} into the Page and assigns the slot
+         * it should take up in the {@link InventoryDimension}.
+         *
+         * @param slot the position in the InventoryDimension
+         * @param element the {@link Element} to be assigned
+         * @return this PageBuilder
+         */
         public PageBuilder putElement(final int slot, @Nonnull final Element element) {
             this.elements.put(slot, element);
             return this;
         }
 
+        /**
+         * Adds an {@link Element} to the Page. The Element is
+         * automatically assigned after the last one.
+         *
+         * @param element the Element to be added
+         * @return this PageBuilder
+         */
         public PageBuilder addElement(@Nonnull final Element element) {
             this.elements.put(this.elements.size(), element);
             return this;
         }
 
+        /**
+         * Sets the {@link InventoryDimension} to be used by this Page.
+         *
+         * @param inventoryDimension the InventoryDimension to be used
+         * @return this PageBuilder
+         */
         @Nonnull
         public PageBuilder setInventoryDimension(@Nonnull final InventoryDimension inventoryDimension) {
             this.inventoryDimension = inventoryDimension;
             return this;
         }
 
+        /**
+         * Sets the title of this chest
+         *
+         * @param title the title of the chest
+         * @return this PageBuilder
+         */
         @Nonnull
         public PageBuilder setTitle(@Nonnull final Text title) {
             this.title = title;
             return this;
         }
 
+        /**
+         * Sets the {@link ItemStack} to be used as a default, if
+         * no {@link Element} is assigned.
+         *
+         * <p>If unset, this will default to {@link Page#defaultEmptyStack}.</p>
+         *
+         * @param emptyStack
+         * @return
+         */
         @Nonnull
         public PageBuilder setEmptyStack(@Nonnull final ItemStack emptyStack) {
             this.emptyStack = emptyStack;
             return this;
         }
 
+        /**
+         * Sets whether or not to fill empty spaces.
+         *
+         * @param fillWhenEmpty whether or not to fill empty spaces
+         * @return this PageBuilder
+         */
         @Nonnull
         public PageBuilder setFillWhenEmpty(final boolean fillWhenEmpty) {
             this.fillWhenEmpty = fillWhenEmpty;
             return this;
         }
 
+        /**
+         * Sets whether or not to let HuskyUI to handling paging.
+         *
+         * @param autoPaging whether or not HuskyUI should handle paging
+         * @return this PageBuilder
+         */
         @Nonnull
         public PageBuilder setAutoPaging(final boolean autoPaging) {
             this.autoPaging = autoPaging;
             return this;
         }
 
+        /**
+         * Sets whether or not {@link ItemStack}s should be centered.
+         *
+         * @param centered whether or not ItemStacks should be centered
+         * @return this PageBuilder
+         */
         @Nonnull
         public PageBuilder setCentered(final boolean centered) {
             this.centered = centered;
             return this;
         }
 
+        /**
+         * Builds this PageBuilder to get a new {@link Page} object.
+         *
+         * @param id the ID of the new State (Page)
+         * @return a new Page
+         */
         public Page build(@Nonnull final String id) {
             final int rows = (int) Math.ceil(((double) this.elements.size()) / 9d);
             return new Page(id,

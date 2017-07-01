@@ -29,42 +29,98 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * StateContainer is a system to make "GUIs" easy to make and interact with for developers. Specifically me.
- * This class actually doesn't do anything other than hold data for GUIs.
+ * The StateContainer's purpose is to be the gateway for information
+ * regarding any active GUI. It can also be easily copied, with the
+ * purpose of assigning a separate container for each user accessing
+ * the GUI, allowing extensible on a per-user basis.
  */
 public class StateContainer {
 
+    /**
+     * Contains the {@link State}s in use by this container, sorted
+     * by that State's ID.
+     */
     @Nonnull private final Map<String, State> states;
+
+    /**
+     * References the ID of the {@link State} which has been
+     * deemed as the "default" State.
+     *
+     * <p>When the GUI is initially opened, for instance, this
+     * ID should reference which State to be loaded first.</p>
+     */
     @Nullable private String initialState;
 
+    /**
+     * A StateContainer constructor. Left empty to pass equally
+     * empty data to the other constructor.
+     */
     public StateContainer() {
         this(Maps.newHashMap());
     }
 
+    /**
+     * A StateContainer constructor. Passed to it are the current
+     * {@link State}s that this GUI can expect to contain.
+     *
+     * @param states the current States for this GUI
+     */
     public StateContainer(@Nonnull final Map<String, State> states) {
         this.states = states;
         this.initialState = null;
     }
 
+    /**
+     * A StateContainer constructor. Passed to it are the current
+     * {@link State}s that this GUI can expect to contain.
+     *
+     * <p>Also requires an initial State to be defined.</p>
+     *
+     * @param states the current States for this GUI
+     * @param initialState the initial State
+     */
     public StateContainer(@Nonnull final Map<String, State> states, @Nonnull final String initialState) {
         this.states = states;
         this.initialState = initialState;
     }
 
+    /**
+     * Gets the current {@link State}s in use by this GUI.
+     *
+     * @return the current States in use by this GUI
+     */
     @Nonnull
     public Map<String, State> getStates() {
         return this.states;
     }
 
+    /**
+     * Gets a specific {@link State} in use by this GUI,
+     * based on its ID.
+     *
+     * @param id the ID of the State being requested
+     * @return the State being requested; null if non-existent
+     */
     @Nullable
     public State getState(@Nonnull final String id) {
         return this.states.get(id);
     }
 
+    /**
+     * Determines whether or not the requested {@link State} exists.
+     *
+     * @param id the ID of the State being determined
+     * @return true if the State exists, false otherwise
+     */
     public boolean hasState(@Nonnull final String id) {
         return this.getState(id) != null;
     }
 
+    /**
+     * Adds a {@link State} to this GUI.
+     *
+     * @param state the State to be added
+     */
     public void addState(@Nonnull final State state) {
         state.setContainer(this);
 
@@ -75,6 +131,11 @@ public class StateContainer {
         this.states.put(state.getId(), state);
     }
 
+    /**
+     * Removes a {@link State} from this GUI.
+     *
+     * @param id the ID of the State to be removed
+     */
     public void removeState(@Nonnull final String id) {
         if (this.initialState != null && this.initialState.equals(id)) {
             this.initialState = null;
@@ -83,12 +144,23 @@ public class StateContainer {
         this.states.remove(id);
     }
 
+    /**
+     * Removes a {@link State} from this GUI.
+     *
+     * @param state the State object itself to be removed
+     */
     public void removeState(@Nonnull final State state) {
         if (this.hasState(state.getId())) {
             this.removeState(state.getId());
         }
     }
 
+    /**
+     * Sets the initial {@link State} to be displayed when
+     * the GUI is opened.
+     *
+     * @param state the State to be displayed when the GUI is opened
+     */
     public void setInitialState(@Nonnull final State state) {
         this.initialState = state.getId();
 
@@ -97,6 +169,13 @@ public class StateContainer {
         }
     }
 
+    /**
+     * Opens a specific {@link State} for a {@link Player},
+     * based on the expected ID of the State.
+     *
+     * @param player the Player to display the State to
+     * @param id the ID of the State being requested
+     */
     public void openState(@Nonnull final Player player, @Nonnull final String id) {
         final State state = this.copy().states.get(id);
 
@@ -119,6 +198,11 @@ public class StateContainer {
         fail(player, "Invalid ID: " + id);
     }
 
+    /**
+     * Opens the initial {@link State} for the {@link Player}.
+     *
+     * @param player the Player to show the initial State to
+     */
     public void launchFor(@Nonnull final Player player) {
         if (this.initialState == null) {
             fail(player, "Attempted to open a container without an initial state!");
@@ -128,6 +212,11 @@ public class StateContainer {
         this.openState(player, this.initialState);
     }
 
+    /**
+     * Creates a copy of this StateContainer.
+     *
+     * @return a copy of this StateContainer
+     */
     @Nonnull
     public StateContainer copy() {
         final StateContainer container = new StateContainer();
@@ -143,6 +232,13 @@ public class StateContainer {
         return container;
     }
 
+    /**
+     * A simple convenience method to send failures to
+     * {@link Player}s; added by a misguided, lazy developer.
+     *
+     * @param player the Player to send the message to
+     * @param message the message to be sent to the Player
+     */
     private static void fail(@Nonnull final Player player, @Nonnull final String message) {
         player.sendMessage(Text.of(TextColors.RED, message));
     }

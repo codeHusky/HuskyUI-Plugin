@@ -21,19 +21,43 @@ import com.codehusky.huskyui.StateContainer;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
+/**
+ * A basic Element is, essentially, a simple wrapper for
+ * an {@link ItemStack} and serves no purpose.
+ */
 public class Element {
 
+    /**
+     * The {@link ItemStack} being wrapped.
+     */
     @Nonnull private final ItemStack item;
 
+    /**
+     * Constructs a new Element.
+     *
+     * @param item the {@link ItemStack} to be wrapped
+     */
     public Element(@Nonnull final ItemStack item) {
         this.item = item;
     }
 
+    /**
+     * Gets the {@link ItemStack} being wrapped.
+     *
+     * @return the wrapped ItemStack
+     */
     @Nonnull
     public ItemStack getItem() {
         return this.item;
     }
 
+    /**
+     * Creates a copy of this Element.
+     *
+     * @param newContainer the {@link StateContainer} now
+     *                     responsible for this Element
+     * @return a copy of this Element
+     */
     @Nonnull
     public Element copy(@Nonnull final StateContainer newContainer) { // We don't use this on purpose.
         return new Element(this.item.copy());

@@ -19,7 +19,15 @@ package com.codehusky.huskyui.states.action.runnable;
 
 import javax.annotation.Nonnull;
 
+/**
+ * A pre-determined action to be run when interfacing with a Page.
+ */
 public interface UIRunnable {
 
+    /**
+     * The additional actions to be run when interfacing with a Page.
+     *
+     * @param context the RunnableAction that relates to this runnable
+     */
     void run(@Nonnull final RunnableAction context);
 }
