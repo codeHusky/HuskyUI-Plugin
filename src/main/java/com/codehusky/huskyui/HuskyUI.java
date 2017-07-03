@@ -80,7 +80,7 @@ public class HuskyUI {
      * The main, generic {@link Cause} that gets passed to
      * Sponge during (or while creating) events.
      */
-    private Cause genericCause;
+    @Nonnull private final Cause genericCause;
 
     /**
      * The HuskyUI constructor.
@@ -93,6 +93,7 @@ public class HuskyUI {
     public HuskyUI(@Nonnull final PluginContainer pluginContainer) {
         HuskyUI.instance = this;
         this.pluginContainer = pluginContainer;
+        this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
     }
 
     /**
@@ -119,21 +120,9 @@ public class HuskyUI {
      *
      * @return HuskyUI's generic event cause
      */
+    @Nonnull
     public Cause getGenericCause() {
         return this.genericCause;
-    }
-
-    /**
-     * Listens to {@link GameStartedServerEvent} passed by Sponge.
-     *
-     * <p>Its only purpose is to assign a {@link Cause} to
-     * HuskyUI's generic cause.</p>
-     *
-     * @param event the event passed by Sponge
-     */
-    @Listener
-    public void onGameStartedServer(@Nonnull final GameStartedServerEvent event) {
-        this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
     }
 
     /**

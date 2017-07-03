@@ -12,22 +12,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with HuskyUI.  If not, see <http://www.gnu.org/licenses/>.
+ * along with HuskyUI. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.codehusky.huskyui.states.action.runnable;
+package com.codehusky.huskyui.examples.inventory;
 
-import javax.annotation.Nonnull;
+public class ExampleGUI {
 
-/**
- * A pre-determined action to be run when interfacing with a Page.
- */
-public interface UIRunnable {
-
-    /**
-     * The additional actions to be run when interfacing with a Page.
-     *
-     * @param context the RunnableAction that relates to this runnable
-     */
-    void run(@Nonnull final RunnableAction context);
 }
