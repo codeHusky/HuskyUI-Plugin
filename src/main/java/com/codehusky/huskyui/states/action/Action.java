@@ -29,6 +29,8 @@ import javax.annotation.Nonnull;
 /**
  * This class' purpose is to be used to determine the movement
  * of a user within a GUI.
+ * @see CommandAction
+ * @see com.codehusky.huskyui.states.action.runnable.RunnableAction
  */
 public class Action {
 
