@@ -19,10 +19,8 @@ package com.codehusky.huskyui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.cause.NamedCause;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -37,23 +35,38 @@ import javax.inject.Inject;
  * data.</p>
  */
 @Plugin(id = HuskyUI.PLUGIN_ID, name = HuskyUI.PLUGIN_NAME, version = HuskyUI.PLUGIN_VERSION,
-        description = "A framework for Inventory UI.")
+        description = HuskyUI.PLUGIN_DESCRIPTION)
 public class HuskyUI {
 
     /**
      * The ID of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_ID = "huskyui";
+    public static final String PLUGIN_ID = "@pluginId@";
+
+    /**
+     * Creates a unique ID for HuskyUI to use for its generic {@link Cause}.
+     */
+    public static final String CAUSE_STRING = "@pluginId@-cause";
+
+    /**
+     * Defines the type of class that the generic {@link Cause} must take.
+     */
+    public static final Class<PluginContainer> CAUSE_CLASS = PluginContainer.class;
 
     /**
      * The Name of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_NAME = "HuskyUI";
+    public static final String PLUGIN_NAME = "@pluginName@";
 
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.2.1";
+    public static final String PLUGIN_VERSION = "@pluginVersion@";
+
+    /**
+     * The Description of HuskyUI for Sponge.
+     */
+    public static final String PLUGIN_DESCRIPTION = "@pluginDescription@";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
@@ -75,7 +88,7 @@ public class HuskyUI {
      * The main, generic {@link Cause} that gets passed to
      * Sponge during (or while creating) events.
      */
-    private Cause genericCause;
+    @Nonnull private final Cause genericCause;
 
     /**
      * The HuskyUI constructor.
@@ -88,6 +101,7 @@ public class HuskyUI {
     public HuskyUI(@Nonnull final PluginContainer pluginContainer) {
         HuskyUI.instance = this;
         this.pluginContainer = pluginContainer;
+        this.genericCause = Cause.of(NamedCause.of(CAUSE_STRING, this.pluginContainer));
     }
 
     /**
@@ -114,21 +128,23 @@ public class HuskyUI {
      *
      * @return HuskyUI's generic event cause
      */
+    @Nonnull
     public Cause getGenericCause() {
         return this.genericCause;
     }
 
     /**
-     * Listens to {@link GameStartedServerEvent} passed by Sponge.
+     * Determines whether or not a given cause contains HuskUI.
      *
-     * <p>Its only purpose is to assign a {@link Cause} to
-     * HuskyUI's generic cause.</p>
-     *
-     * @param event the event passed by Sponge
+     * @param cause the cause being looked at
+     * @return true if HuskyUI is a cause in the given cause; false otherwise
      */
-    @Listener
-    public void onGameStartedServer(@Nonnull final GameStartedServerEvent event) {
-        this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
+    public boolean isCause(@Nonnull final Cause cause) {
+        final PluginContainer container = cause.get(CAUSE_STRING, CAUSE_CLASS).orElse(null);
+
+        return container != null
+                && container.getInstance().isPresent()
+                && container.getInstance().get() instanceof HuskyUI;
     }
 
     /**
