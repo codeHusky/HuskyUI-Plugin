@@ -28,13 +28,23 @@ public interface Controller<M extends Menu, P extends Page, O extends ObserverCo
 
     M getMenu(@Nonnull final UUID identifier);
 
+    boolean hasMenu(@Nonnull final UUID identifier);
+
+    boolean hasMenu(@Nonnull final M menu);
+
     Map<UUID, P> getPageRegistry();
 
     P getPage(@Nonnull final UUID identifier);
 
+    boolean hasPage(@Nonnull final UUID identifier);
+
+    boolean hasPage(@Nonnull final P page);
+
     Map<UUID, O> getObserverRegistry();
 
     @Nonnull O getObserver(@Nonnull final UUID identifier);
+
+    boolean hasObserver(@Nonnull final O observer);
 
     void add(@Nonnull final M menu);
 

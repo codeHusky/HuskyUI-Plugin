@@ -70,7 +70,11 @@ public class InventoryPage implements Page<InventoryPage, ItemStack> {
 
     @Override
     public void addChild(@Nonnull final UUID child) {
+        if (!InventoryController.getInstance().hasPage(child)) {
+            throw new IllegalArgumentException("Attempted to add a child with UUID \"" + child.toString() + "\" but doesn't exist.");
+        }
 
+        this.addChild(InventoryController.getInstance().getPage(child));
     }
 
     @Override

@@ -17,6 +17,7 @@
 
 package com.codehusky.huskyui.inventory;
 
+import com.codehusky.huskyui.HuskyUI;
 import com.codehusky.huskyui.api.Controller;
 import com.codehusky.huskyui.inventory.action.context.InventoryObserverContext;
 import com.google.common.collect.Maps;
@@ -52,6 +53,16 @@ public final class InventoryController implements Controller<InventoryMenu, Inve
         return this.menuRegistry.get(identifier);
     }
 
+    @Override
+    public boolean hasMenu(@Nonnull final UUID identifier) {
+        return this.menuRegistry.containsKey(identifier);
+    }
+
+    @Override
+    public boolean hasMenu(@Nonnull final InventoryMenu menu) {
+        return this.menuRegistry.containsValue(menu);
+    }
+
     @Nonnull
     @Override
     public Map<UUID, InventoryPage> getPageRegistry() {
@@ -61,6 +72,16 @@ public final class InventoryController implements Controller<InventoryMenu, Inve
     @Override
     public InventoryPage getPage(@Nonnull final UUID identifier) {
         return this.pageRegistry.get(identifier);
+    }
+
+    @Override
+    public boolean hasPage(@Nonnull final UUID identifier) {
+        return this.pageRegistry.containsKey(identifier);
+    }
+
+    @Override
+    public boolean hasPage(@Nonnull final InventoryPage page) {
+        return this.pageRegistry.containsValue(page);
     }
 
     @Nonnull
@@ -82,17 +103,34 @@ public final class InventoryController implements Controller<InventoryMenu, Inve
     }
 
     @Override
+    public boolean hasObserver(@Nonnull final InventoryObserverContext observer) {
+        return this.observerRegistry.containsValue(observer);
+    }
+
+    @Override
     public void add(@Nonnull final InventoryMenu menu) {
+        if (this.hasMenu(menu.getIdentifier())) {
+            HuskyUI.getLogger().warn("Menu \"{}\" is being manually overwritten.", menu.getIdentifier().toString());
+        }
+
         this.menuRegistry.put(menu.getIdentifier(), menu);
     }
 
     @Override
     public void add(@Nonnull final InventoryPage page) {
+        if (this.hasPage(page.getIdentifier())) {
+            HuskyUI.getLogger().warn("Page \"{}\" is being manually overwritten.", page.getIdentifier().toString());
+        }
+
         this.pageRegistry.put(page.getIdentifier(), page);
     }
 
     @Override
     public void add(@Nonnull final InventoryObserverContext observer) {
+        if (this.hasObserver(observer)) {
+            HuskyUI.getLogger().warn("Observer \"{}\" is being manually overwritten.", observer.getPlayerIdentifier().toString());
+        }
+
         this.observerRegistry.put(observer.getPlayerIdentifier(), observer);
     }
 
