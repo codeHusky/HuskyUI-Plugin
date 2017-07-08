@@ -62,6 +62,8 @@ public class InventoryPage implements Page<InventoryPage, ItemStack> {
     @Override
     public void addChild(@Nonnull final InventoryPage child) {
         if (this.hasChild(child.getIdentifier())) {
+            // TODO: This isn't actually the case.
+            // When I introduce proper inventory support, this needs to change.
             throw new IllegalStateException("Two inventories with the same identifier cannot share the same parent.");
         }
 

@@ -156,7 +156,7 @@ public final class InventoryController implements Controller<InventoryMenu, Inve
 
     @Override
     public void drawPage(@Nonnull final InventoryObserverContext observer, @Nonnull final InventoryPage page) {
-
+        // TODO: DRAW
     }
 
     @Override
