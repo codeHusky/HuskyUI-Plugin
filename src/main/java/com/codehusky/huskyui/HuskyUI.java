@@ -44,6 +44,16 @@ public class HuskyUI {
     public static final String PLUGIN_ID = "@pluginId@";
 
     /**
+     * Creates a unique ID for HuskyUI to use for its generic {@link Cause}.
+     */
+    public static final String CAUSE_STRING = "@pluginId@-cause";
+
+    /**
+     * Defines the type of class that the generic {@link Cause} must take.
+     */
+    public static final Class<PluginContainer> CAUSE_CLASS = PluginContainer.class;
+
+    /**
      * The Name of HuskyUI for Sponge.
      */
     public static final String PLUGIN_NAME = "@pluginName@";
@@ -91,7 +101,7 @@ public class HuskyUI {
     public HuskyUI(@Nonnull final PluginContainer pluginContainer) {
         HuskyUI.instance = this;
         this.pluginContainer = pluginContainer;
-        this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
+        this.genericCause = Cause.of(NamedCause.of(CAUSE_STRING, this.pluginContainer));
     }
 
     /**
@@ -121,6 +131,20 @@ public class HuskyUI {
     @Nonnull
     public Cause getGenericCause() {
         return this.genericCause;
+    }
+
+    /**
+     * Determines whether or not a given cause contains HuskUI.
+     *
+     * @param cause the cause being looked at
+     * @return true if HuskyUI is a cause in the given cause; false otherwise
+     */
+    public boolean isCause(@Nonnull final Cause cause) {
+        final PluginContainer container = cause.get(CAUSE_STRING, CAUSE_CLASS).orElse(null);
+
+        return container != null
+                && container.getInstance().isPresent()
+                && container.getInstance().get() instanceof HuskyUI;
     }
 
     /**
