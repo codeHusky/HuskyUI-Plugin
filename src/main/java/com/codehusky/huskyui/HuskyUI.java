@@ -53,7 +53,7 @@ public class HuskyUI {
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.2.1";
+    public static final String PLUGIN_VERSION = "0.3.0";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
