@@ -19,8 +19,10 @@ package com.codehusky.huskyui.states;
 
 import com.codehusky.huskyui.HuskyUI;
 import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.action.CommandAction;
 import com.codehusky.huskyui.states.element.Element;
 import com.google.common.collect.Maps;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
@@ -225,27 +227,32 @@ public class Page extends State {
                     if (!(event instanceof InteractInventoryEvent.Open)
                             && !(event instanceof InteractInventoryEvent.Close)) {
                         event.setCancelled(true);
-
-                        if (event.getCursorTransaction().getDefault().getType() != ItemTypes.AIR) {
-                            event.getCursorTransaction().getDefault().toContainer().get(DataQuery.of("UnsafeData", "slotnum")).ifPresent(slot -> {
-                                final int num = (int) slot;
-                                if (this.autoPaging) {
-                                    if (num == -1) {
-                                        if(hasParent()) {
-                                            this.getContainer().openState(this.getObserver(), this.getParent());
-                                        }else{
-                                            this.getObserver().closeInventory(HuskyUI.getInstance().getGenericCause());
-                                        }
-                                    } else if (this.elements.get(num) instanceof ActionableElement) {
-                                        ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
-                                    }
-                                } else {
-                                    if (this.elements.get(num) instanceof ActionableElement) {
-                                        ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
-                                    }
-                                }
-                            });
+                        try{
+                            if (event.getCursorTransaction().getDefault().getType() == ItemTypes.AIR) return;
+                        }catch (NoSuchFieldError err){
+                            //old api support
+                            if (event.getCursorTransaction().getDefault().getType() == ItemTypes.NONE) return;
                         }
+
+                        event.getCursorTransaction().getDefault().toContainer().get(DataQuery.of("UnsafeData", "slotnum")).ifPresent(slot -> {
+                            final int num = (int) slot;
+                            if (this.autoPaging) {
+                                if (num == -1) {
+                                    if(hasParent()) {
+                                        this.getContainer().openState(this.getObserver(), this.getParent());
+                                    }else{
+                                        this.getObserver().closeInventory(HuskyUI.getInstance().getGenericCause());
+                                    }
+                                } else if (this.elements.get(num) instanceof ActionableElement) {
+                                    ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
+                                }
+                            } else {
+                                if (this.elements.get(num) instanceof ActionableElement) {
+                                    ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
+                                }
+                            }
+                        });
+
                     }
                 })
                 .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(this.title))

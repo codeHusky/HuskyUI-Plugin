@@ -19,6 +19,7 @@ package com.codehusky.huskyui.states.element;
 
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.action.Action;
+import com.codehusky.huskyui.states.action.CommandAction;
 import org.spongepowered.api.item.inventory.ItemStack;
 import javax.annotation.Nonnull;
 
@@ -42,7 +43,6 @@ public class ActionableElement extends Element {
      */
     public ActionableElement(@Nonnull final Action action, @Nonnull final ItemStack item) {
         super(item);
-
         this.action = action;
     }
 

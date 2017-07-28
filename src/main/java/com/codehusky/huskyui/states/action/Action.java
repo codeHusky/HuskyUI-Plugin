@@ -145,6 +145,9 @@ public class Action {
             case NORMAL:
                 this.container.openState(this.observer, this.goalState);
                 break;
+            case NONE:
+                // do nothing
+                break;
             default:
                 this.observer.sendMessage(Text.of("??"));
                 break;

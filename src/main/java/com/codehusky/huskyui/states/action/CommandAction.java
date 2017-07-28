@@ -56,4 +56,15 @@ public class CommandAction extends Action {
         PLAYER,
         SERVER
     }
+
+    /**
+     * Creates a copy of this CommandAction.
+     *
+     * @param newContainer the new {@link StateContainer} to be responsible for this new Action
+     * @return a copy of this Action
+     */
+    @Nonnull
+    public Action copy(@Nonnull final StateContainer newContainer) {
+        return new CommandAction(newContainer, this.getType(), this.getGoalState(),command,receiver);
+    }
 }
