@@ -98,6 +98,7 @@ public class RunnableAction extends Action {
         } else {
             this.getObserver().sendMessage(Text.of(TextColors.RED, "Cannot run a null action!"));
         }
+        super.runAction(currentState);
     }
 
     /**
