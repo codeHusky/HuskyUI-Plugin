@@ -182,18 +182,19 @@ public class StateContainer {
         if (state == null) {
             fail(player, "Attempted to open a nonexistent state!");
             fail(player, "Invalid ID: " + id);
-            player.closeInventory(HuskyUI.getInstance().getGenericCause());
+            InventoryUtil.close(player);
             return;
         }
 
         state.setObserver(player);
 
         if (state instanceof Page) {
-            player.openInventory(((Page) state).generatePageView(), HuskyUI.getInstance().getGenericCause());
+            InventoryUtil.close(player);
+            InventoryUtil.open(player, ((Page) state).generatePageView());
             return;
         }
 
-        player.closeInventory(HuskyUI.getInstance().getGenericCause());
+        InventoryUtil.close(player);
         fail(player, "Attempted to open an invalid or incomplete state!");
         fail(player, "Invalid ID: " + id);
     }
