@@ -18,6 +18,7 @@
 package com.codehusky.huskyui.states;
 
 import com.codehusky.huskyui.HuskyUI;
+import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.action.CommandAction;
 import com.codehusky.huskyui.states.element.Element;
@@ -28,12 +29,16 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.monster.Husk;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.item.inventory.property.IntProperty;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import com.codehusky.huskyui.states.element.ActionableElement;
@@ -222,10 +227,10 @@ public class Page extends State {
     @Nonnull
     public Inventory generatePageView() {
         final Inventory inventory = Inventory.builder()
+                .property("type", new StringProperty("huskui-page"))
                 .property(InventoryDimension.PROPERTY_NAME, this.inventoryDimension)
                 .listener(InteractInventoryEvent.class, event -> {
-                    if (!(event instanceof InteractInventoryEvent.Open)
-                            && !(event instanceof InteractInventoryEvent.Close)) {
+                    if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
                         event.setCancelled(true);
                         try{
                             if (event.getCursorTransaction().getDefault().getType() == ItemTypes.AIR) return;
@@ -241,7 +246,7 @@ public class Page extends State {
                                     if(hasParent()) {
                                         this.getContainer().openState(this.getObserver(), this.getParent());
                                     }else{
-                                        this.getObserver().closeInventory(HuskyUI.getInstance().getGenericCause());
+                                        InventoryUtil.close(this.getObserver());
                                     }
                                 } else if (this.elements.get(num) instanceof ActionableElement) {
                                     ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
@@ -252,7 +257,9 @@ public class Page extends State {
                                 }
                             }
                         });
-
+                    } else {
+                        event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
+                        event.getCursorTransaction().setValid(true);
                     }
                 })
                 .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(this.title))

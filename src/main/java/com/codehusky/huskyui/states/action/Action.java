@@ -18,6 +18,7 @@
 package com.codehusky.huskyui.states.action;
 
 import com.codehusky.huskyui.HuskyUI;
+import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -129,7 +130,7 @@ public class Action {
     public void runAction(@Nonnull final String currentState) {
         switch (this.type) {
             case CLOSE:
-                this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
+                InventoryUtil.close(this.observer);
                 break;
             case BACK:
                 if (this.container.hasState(currentState)) {
@@ -137,7 +138,7 @@ public class Action {
                         this.container.openState(this.observer, this.container.getState(currentState).getParent());
                     } else {
                         this.observer.playSound(SoundTypes.BLOCK_ANVIL_LAND, this.observer.getLocation().getPosition(), 0.5);
-                        this.observer.closeInventory(HuskyUI.getInstance().getGenericCause());
+                        InventoryUtil.close(this.observer);
                         this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
                     }
                 }
