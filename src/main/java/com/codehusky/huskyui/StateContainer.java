@@ -20,14 +20,20 @@ package com.codehusky.huskyui;
 import com.codehusky.huskyui.states.Page;
 import com.codehusky.huskyui.states.State;
 import com.google.common.collect.Maps;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.entity.PlayerInventory;
+import org.spongepowered.api.item.inventory.property.StringProperty;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * The StateContainer's purpose is to be the gateway for information
@@ -52,6 +58,10 @@ public class StateContainer {
      */
     @Nullable private String initialState;
 
+    @Nullable private Consumer<Page> pageUpdater;
+
+    @Nullable public Task scheduledTask;
+
     /**
      * A StateContainer constructor. Left empty to pass equally
      * empty data to the other constructor.
@@ -69,6 +79,8 @@ public class StateContainer {
     public StateContainer(@Nonnull final Map<String, State> states) {
         this.states = states;
         this.initialState = null;
+        this.pageUpdater = null;
+        scheduledTask = null;
     }
 
     /**
@@ -83,6 +95,8 @@ public class StateContainer {
     public StateContainer(@Nonnull final Map<String, State> states, @Nonnull final String initialState) {
         this.states = states;
         this.initialState = initialState;
+        this.pageUpdater = null;
+        scheduledTask = null;
     }
 
     /**
@@ -120,6 +134,8 @@ public class StateContainer {
     /**
      * Adds a {@link State} to this GUI.
      *
+     * If no default state has been set, this will also set the default state.
+     *
      * @param state the State to be added
      */
     public void addState(@Nonnull final State state) {
@@ -127,6 +143,9 @@ public class StateContainer {
 
         if (this.states.containsKey(state.getId())) {
             throw new IllegalStateException("A State with ID \"" + state.getId() + "\" already exists in this container.");
+        }
+        if(this.initialState == null){
+            this.initialState = state.getId();
         }
 
         this.states.put(state.getId(), state);
@@ -156,6 +175,7 @@ public class StateContainer {
         }
     }
 
+
     /**
      * Sets the initial {@link State} to be displayed when
      * the GUI is opened.
@@ -184,6 +204,8 @@ public class StateContainer {
             fail(player, "Attempted to open a nonexistent state!");
             fail(player, "Invalid ID: " + id);
             InventoryUtil.close(player);
+            this.scheduledTask.cancel();
+            this.scheduledTask = null;
             return;
         }
 
@@ -191,18 +213,48 @@ public class StateContainer {
 
         if (state instanceof Page) {
             InventoryUtil.close(player);
-            Inventory toShow = ((Page) state).generatePageView();
-            if(((Page) state).isUpdatable()){
-                /**
-                 * We need to handle updatable states, probably by changing what the state container is doing.
-                 * TODO: State containers should have update methods that stop running once the page has been dismissed in either a safe way (leaving the page) or unsafe way (closing the inventory, logging out...)
-                 */
+            Page page = (Page) state;
+            Inventory toShow = page.getPageView();
+            System.out.println(page.getUpdateTickRate());
+            if(this.scheduledTask != null){
+                this.scheduledTask.cancel();
+                this.scheduledTask = null;
+            }
+            if(page.isUpdatable()){
+                this.pageUpdater = page.getUpdateConsumer();
+                this.scheduledTask = Sponge.getScheduler().createTaskBuilder().execute(() -> {
+                    if(page.getObserver().getOpenInventory().isPresent()) {
+                        Container container = page.getObserver().getOpenInventory().get();
+                        if (container.getProperties(StringProperty.class).size() != 2) {
+                            scheduledTask.cancel();
+                            scheduledTask = null;
+                        }else{
+                            StringProperty property1 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[0]);
+                            StringProperty property2 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[1]);
+                            System.out.println(property1.getValue());
+                            if(!property2.getValue().equals(page.getId())) {
+                                if (!property1.getValue().equals(page.getId())) {
+                                    scheduledTask.cancel();
+                                    scheduledTask = null;
+                                }
+                            }
+                        }
+                    }
+                    if(page.getTicks() % page.getUpdateTickRate() == 0) {
+                        this.pageUpdater.accept(page);
+                    }
+                    page.tickIncrement();
+
+                }).intervalTicks(1).submit(HuskyUI.getInstance());
             }
             InventoryUtil.open(player, toShow);
+
             return;
         }
 
         InventoryUtil.close(player);
+        this.scheduledTask.cancel();
+        this.scheduledTask = null;
         fail(player, "Attempted to open an invalid or incomplete state!");
         fail(player, "Invalid ID: " + id);
     }

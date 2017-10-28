@@ -29,6 +29,8 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.monster.Husk;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -43,6 +45,7 @@ import com.codehusky.huskyui.states.element.ActionableElement;
 import org.spongepowered.api.text.format.TextStyles;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -118,6 +121,7 @@ public class Page extends State {
     private boolean updatable;
     private int updateTickRate;
     private Consumer<Page> updateConsumer;
+    private Inventory cachedInventory;
 
     /**
      * Constructs a Page.
@@ -143,7 +147,8 @@ public class Page extends State {
                 final boolean fillWhenEmpty,
                 final boolean autoPaging,
                 final boolean centered,
-                final int rows) {
+                final int rows,
+                final String parent) {
         super(id);
         this.elements = elements;
         this.inventoryDimension = inventoryDimension;
@@ -156,6 +161,8 @@ public class Page extends State {
         this.updatable = updatable;
         this.updateTickRate = updateTickRate;
         this.updateConsumer = updateConsumer;
+        cachedInventory = null;
+        this.setParent(parent);
     }
 
     public Consumer<Page> getUpdateConsumer() {
@@ -238,16 +245,28 @@ public class Page extends State {
     public int getRows() {
         return this.rows;
     }
+    private long ticks = 0;
 
+    public long getTicks() {
+        return ticks;
+    }
+
+    public void tickIncrement() {
+        ticks++;
+    }
     /**
      * Generates the {@link Inventory} for this Page.
      *
      * @return the Inventory for this Page
      */
     @Nonnull
-    public Inventory generatePageView() {
+    public Inventory getPageView() {
+        if(updatable && cachedInventory != null){
+            return cachedInventory;
+        }
         final Inventory inventory = Inventory.builder()
                 .property("type", new StringProperty("huskui-page"))
+                .property("id", new StringProperty(getId()))
                 .property(InventoryDimension.PROPERTY_NAME, this.inventoryDimension)
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
@@ -325,6 +344,9 @@ public class Page extends State {
 
             num++;
         }
+        if(updatable){
+            this.cachedInventory = inventory;
+        }
         return inventory;
     }
 
@@ -373,6 +395,9 @@ public class Page extends State {
         builder.setFillWhenEmpty(this.fillWhenEmpty);
         builder.setAutoPaging(this.autoPaging);
         builder.setCentered(this.centered);
+        builder.setUpdateTickRate(updateTickRate);
+        builder.setUpdater(updateConsumer);
+        builder.setUpdatable(updatable);
 
         final Page page = builder.build(this.getId());
 
@@ -457,6 +482,9 @@ public class Page extends State {
 
         private Consumer<Page> updaterConsumer;
 
+        @Nullable
+        private String parent;
+
         /**
          * Constructs a new {@link PageBuilder}, currently only
          * accessible via {@link Page#builder()}.
@@ -472,6 +500,7 @@ public class Page extends State {
             this.updatable = false;
             this.updateTickRate = 1;
             this.updaterConsumer = null;
+            this.parent = null;
         }
 
         /**
@@ -521,6 +550,10 @@ public class Page extends State {
         public PageBuilder setTitle(@Nonnull final Text title) {
             this.title = title;
             return this;
+        }
+
+        public void setParent(@Nullable String parent) {
+            this.parent = parent;
         }
 
         /**
@@ -612,7 +645,8 @@ public class Page extends State {
                     this.fillWhenEmpty,
                     this.autoPaging,
                     this.centered,
-                    rows
+                    rows,
+                    parent
             );
         }
     }

@@ -19,7 +19,10 @@ package com.codehusky.huskyui;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 
@@ -50,7 +53,7 @@ public class HuskyUI {
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.3.1";
+    public static final String PLUGIN_VERSION = "0.4.0";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
@@ -115,4 +118,5 @@ public class HuskyUI {
     public static Logger getLogger() {
         return LOGGER;
     }
+
 }
