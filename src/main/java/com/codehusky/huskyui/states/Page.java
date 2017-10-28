@@ -18,7 +18,6 @@
 package com.codehusky.huskyui.states;
 
 import com.codehusky.huskyui.HuskyUI;
-import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.action.CommandAction;
 import com.codehusky.huskyui.states.element.Element;
@@ -29,16 +28,12 @@ import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.monster.Husk;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
-import org.spongepowered.api.item.inventory.property.IntProperty;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
-import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import com.codehusky.huskyui.states.element.ActionableElement;
@@ -46,6 +41,7 @@ import org.spongepowered.api.text.format.TextStyles;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * An extension of {@link State}, intended to be used for
@@ -135,6 +131,9 @@ public class Page extends State {
                 @Nonnull final InventoryDimension inventoryDimension,
                 @Nonnull final Text title,
                 @Nonnull final ItemStack emptyStack,
+                final boolean updatable,
+                final int updateTickRate,
+                final Consumer<Page> updateConsumer,
                 final boolean fillWhenEmpty,
                 final boolean autoPaging,
                 final boolean centered,
@@ -425,6 +424,20 @@ public class Page extends State {
         private boolean centered;
 
         /**
+         * Defines if the current page should be checked for updates.
+         */
+        private boolean updatable;
+
+
+        /**
+         * How often the updater should be fired.
+         * Defaults to a 1 tick interval.
+         */
+        private int updateTickRate;
+
+        private Consumer<Page> updaterConsumer;
+
+        /**
          * Constructs a new {@link PageBuilder}, currently only
          * accessible via {@link Page#builder()}.
          */
@@ -436,6 +449,9 @@ public class Page extends State {
             this.fillWhenEmpty = false;
             this.autoPaging = false;
             this.centered = true;
+            this.updatable = false;
+            this.updateTickRate = 1;
+            this.updaterConsumer = null;
         }
 
         /**
@@ -538,6 +554,24 @@ public class Page extends State {
             return this;
         }
 
+        @Nonnull
+        public PageBuilder setUpdatable(final boolean updatable){
+            this.updatable = updatable;
+            return this;
+        }
+
+        @Nonnull
+        public PageBuilder setUpdateTickRate(final int updateTickRate){
+            this.updateTickRate = updateTickRate;
+            return this;
+        }
+
+        @Nonnull
+        public PageBuilder setUpdater(final Consumer<Page> updaterConsumer){
+            this.updaterConsumer = updaterConsumer;
+            return this;
+        }
+
         /**
          * Builds this PageBuilder to get a new {@link Page} object.
          *
@@ -552,6 +586,9 @@ public class Page extends State {
                             this.inventoryDimension : InventoryDimension.of(9, rows + 1)),
                     this.title,
                     this.emptyStack,
+                    this.updatable,
+                    this.updateTickRate,
+                    this.updaterConsumer,
                     this.fillWhenEmpty,
                     this.autoPaging,
                     this.centered,
