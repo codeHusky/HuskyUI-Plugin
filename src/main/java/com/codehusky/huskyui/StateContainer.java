@@ -21,6 +21,7 @@ import com.codehusky.huskyui.states.Page;
 import com.codehusky.huskyui.states.State;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -190,7 +191,14 @@ public class StateContainer {
 
         if (state instanceof Page) {
             InventoryUtil.close(player);
-            InventoryUtil.open(player, ((Page) state).generatePageView());
+            Inventory toShow = ((Page) state).generatePageView();
+            if(((Page) state).isUpdatable()){
+                /**
+                 * We need to handle updatable states, probably by changing what the state container is doing.
+                 * TODO: State containers should have update methods that stop running once the page has been dismissed in either a safe way (leaving the page) or unsafe way (closing the inventory, logging out...)
+                 */
+            }
+            InventoryUtil.open(player, toShow);
             return;
         }
 

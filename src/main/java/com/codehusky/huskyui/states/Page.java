@@ -115,6 +115,9 @@ public class Page extends State {
      * being digested by the Page.</p>
      */
     private final int rows;
+    private boolean updatable;
+    private int updateTickRate;
+    private Consumer<Page> updateConsumer;
 
     /**
      * Constructs a Page.
@@ -150,6 +153,21 @@ public class Page extends State {
         this.autoPaging = autoPaging;
         this.centered = centered;
         this.rows = rows;
+        this.updatable = updatable;
+        this.updateTickRate = updateTickRate;
+        this.updateConsumer = updateConsumer;
+    }
+
+    public Consumer<Page> getUpdateConsumer() {
+        return updateConsumer;
+    }
+
+    public int getUpdateTickRate() {
+        return updateTickRate;
+    }
+
+    public boolean isUpdatable() {
+        return updatable;
     }
 
     /**
@@ -307,7 +325,6 @@ public class Page extends State {
 
             num++;
         }
-
         return inventory;
     }
 
