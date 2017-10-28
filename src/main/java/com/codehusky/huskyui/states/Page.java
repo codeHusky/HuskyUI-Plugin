@@ -18,6 +18,7 @@
 package com.codehusky.huskyui.states;
 
 import com.codehusky.huskyui.HuskyUI;
+import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.action.CommandAction;
 import com.codehusky.huskyui.states.element.Element;
@@ -32,8 +33,10 @@ import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
+import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import com.codehusky.huskyui.states.element.ActionableElement;
