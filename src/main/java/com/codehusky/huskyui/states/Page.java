@@ -247,8 +247,12 @@ public class Page extends State {
     }
     private long ticks = 0;
 
-    public long getTicks() {
+    public long getActualTicks() {
         return ticks;
+    }
+
+    public long getTicks() {
+        return (long)Math.floor(ticks/updateTickRate);
     }
 
     public void tickIncrement() {

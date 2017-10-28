@@ -215,7 +215,6 @@ public class StateContainer {
             InventoryUtil.close(player);
             Page page = (Page) state;
             Inventory toShow = page.getPageView();
-            System.out.println(page.getUpdateTickRate());
             if(this.scheduledTask != null){
                 this.scheduledTask.cancel();
                 this.scheduledTask = null;
@@ -228,19 +227,20 @@ public class StateContainer {
                         if (container.getProperties(StringProperty.class).size() != 2) {
                             scheduledTask.cancel();
                             scheduledTask = null;
+                            return;
                         }else{
                             StringProperty property1 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[0]);
                             StringProperty property2 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[1]);
-                            System.out.println(property1.getValue());
                             if(!property2.getValue().equals(page.getId())) {
                                 if (!property1.getValue().equals(page.getId())) {
                                     scheduledTask.cancel();
                                     scheduledTask = null;
+                                    return;
                                 }
                             }
                         }
                     }
-                    if(page.getTicks() % page.getUpdateTickRate() == 0) {
+                    if(page.getActualTicks() % page.getUpdateTickRate() == 0) {
                         this.pageUpdater.accept(page);
                     }
                     page.tickIncrement();
