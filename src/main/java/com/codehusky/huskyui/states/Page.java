@@ -552,8 +552,9 @@ public class Page extends State {
             return this;
         }
 
-        public void setParent(@Nullable String parent) {
+        public PageBuilder setParent(@Nullable String parent) {
             this.parent = parent;
+            return this;
         }
 
         /**
