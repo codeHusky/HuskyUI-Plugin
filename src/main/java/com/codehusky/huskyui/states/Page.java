@@ -27,7 +27,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
-import org.spongepowered.api.entity.living.monster.Husk;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Event;
 import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
@@ -271,7 +270,7 @@ public class Page extends State {
         final Inventory inventory = Inventory.builder()
                 .property("type", new StringProperty("huskui-page"))
                 .property("id", new StringProperty(getId()))
-                .property(InventoryDimension.PROPERTY_NAME, this.inventoryDimension)
+                .property(InventoryDimension.PROPERTY_NAM, this.inventoryDimension)
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
                         event.setCancelled(true);

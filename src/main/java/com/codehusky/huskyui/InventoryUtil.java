@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public class InventoryUtil {
     public static void close(Player player) {
-        player.closeInventory();
+        player.closeInventory(HuskyUI.getInstance().getGenericCause());
     }
 
     public static void open(Player player, Inventory inventory) {
-        player.openInventory(inventory);
+        player.openInventory(inventory,HuskyUI.getInstance().getGenericCause());
     }
 
 }

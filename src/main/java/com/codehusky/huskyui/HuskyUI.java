@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.plugin.Plugin;
@@ -119,4 +121,20 @@ public class HuskyUI {
         return LOGGER;
     }
 
+    /**
+     * Listens to {@link GameStartedServerEvent} passed by Sponge.
+     *
+     * <p>Its only purpose is to assign a {@link Cause} to
+     * HuskyUI's generic cause.</p>
+     *
+     * @param event the event passed by Sponge
+     */
+    @Listener
+    public void onGameStartedServer(@Nonnull final GameStartedServerEvent event) {
+        this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
+    }
+
+    public Cause getGenericCause() {
+        return genericCause;
+    }
 }
