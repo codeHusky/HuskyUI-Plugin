@@ -40,6 +40,9 @@ import javax.inject.Inject;
         description = "A framework for Inventory UI.")
 public class HuskyUI {
 
+    @Inject
+    private Metrics metrics;
+
     /**
      * The ID of HuskyUI for Sponge.
      */
