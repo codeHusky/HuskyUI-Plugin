@@ -200,6 +200,16 @@ public class ElementRegistry extends StateContainer {
         return elements.containsKey(id);
     }
 
+    public boolean isElementAuto(int id){
+        if(!elements.containsKey(id)) throw new RuntimeException("Cannot check if element is auto: Element id \"" + id + "\" is not registered.");
+        return autoInvElements.contains(id);
+    }
+
+    public boolean isElementFixedAuto(int id){
+        if(!isElementAuto(id)) throw new RuntimeException("Cannot check if element is fixed auto: Element \"" + id + "\"is not auto.");
+        return autoInvLocations.values().contains(id);
+    }
+
     /**
      * Get an inventory-ready itemstack for any given element
      *

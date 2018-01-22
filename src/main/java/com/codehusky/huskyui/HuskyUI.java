@@ -26,6 +26,8 @@ import com.codehusky.huskyui.states.element.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
@@ -35,16 +37,17 @@ import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEv
 import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
-import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import org.spongepowered.api.event.item.inventory.*;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -162,7 +165,26 @@ public class HuskyUI {
         testAction.setRunnable(context -> {
             StateContainer container = new StateContainer();
             Page testPage = Page.builder()
-                    .setTitle(Text.of("WOAH"))
+                    .setTitle(Text.of(TextColors.GOLD,"Navigator"))
+                    .setAutoPaging(true)
+                    .addElement(new Element(
+                            ItemStack.builder()
+                                .itemType(ItemTypes.DIAMOND)
+                                .add(Keys.DISPLAY_NAME,Text.of(TextColors.BLUE,"Diamond Rush"))
+                                .build()
+                            ))
+                    .addElement(new Element(
+                            ItemStack.builder()
+                                    .itemType(ItemTypes.FIREWORKS)
+                                    .add(Keys.DISPLAY_NAME,Text.of(TextColors.RED,"Fireworks Palooza"))
+                                    .build()
+                    ))
+                    .addElement(new Element(
+                            ItemStack.builder()
+                                    .itemType(ItemTypes.MINECART)
+                                    .add(Keys.DISPLAY_NAME,Text.of(TextColors.GRAY,"Roller Coasters"))
+                                    .build()
+                    ))
                     .build("testpage");
             container.setInitialState(testPage);
             container.launchFor(context.getObserver());
@@ -171,15 +193,20 @@ public class HuskyUI {
                                             testAction,
                                             ItemStack.builder()
                                                     .itemType(ItemTypes.COMPASS)
-                                                    .add(Keys.DISPLAY_NAME, Text.of("COMPASS OWO"))
+                                                    .add(Keys.DISPLAY_NAME, Text.of(TextColors.GOLD,"Navigator"))
                                                     .build());
 
-        registry.registerAutoElement(testElement);
-    }
+        registry.registerAutoElement(4,testElement);
+        ItemStack litMC = ItemStack.builder()
+                .itemType(ItemTypes.REDSTONE_TORCH)
+                .add(Keys.DISPLAY_NAME,Text.of(TextColors.RED,"LitMC"))
+                .build();
+        registry.registerAutoElement(0,new Element(litMC));
+        registry.registerAutoElement(8,new Element(litMC));
 
-    @Listener
-    public void reload(GameReloadEvent event){
-
+        registry.registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 1")).build()));
+        registry.registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 2")).build()));
+        registry.registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 3")).build()));
     }*/
 
     /**
@@ -233,15 +260,78 @@ public class HuskyUI {
      * @param event When a player interacts with an item with their secondary mouse button.
      */
     @Listener(order= Order.LAST)
-    public void onElementInteract(InteractItemEvent.Secondary event){
+    public void onElementInteract(InteractItemEvent event){
         Optional<Element> ele = registry.getElementFromItemStack(event.getItemStack().createStack());
         if(ele.isPresent()){
-            if(ele.get() instanceof ActionableElement) {
-                ActionableElement aElement = ((ActionableElement) ele.get()).copy(registry);
-                aElement.getAction().setObserver((Player)event.getCause().root());
-                aElement.getAction().runAction("");
+            if(event instanceof InteractItemEvent.Secondary) {
+                if (ele.get() instanceof ActionableElement) {
+                    ActionableElement aElement = ((ActionableElement) ele.get()).copy(registry);
+                    aElement.getAction().setObserver((Player) event.getCause().root());
+                    aElement.getAction().runAction("");
+                }
+            }
+            event.setCancelled(true);
+        }
+    }
+
+    @Listener
+    public void onItemDrop(DropItemEvent.Dispense event){
+        for(Entity e :event.getEntities()){
+            if(e instanceof Item){
+                ItemStack affectedStack = ((Item) e).getItemData().item().get().createStack();
+                Optional<Integer> potentialID = registry.getElementIDFromItemStack(affectedStack);
+                if(potentialID.isPresent()){
+                    if(registry.elementExists(potentialID.get())){
+                        event.setCancelled(true); //NOTHING should drop a registered item. >:(
+                        //TODO: handle https://github.com/SpongePowered/SpongeCommon/issues/1678 properly w/ workaround
+                    }
+                }
             }
         }
     }
+
+    @Listener
+    public void onItemUse(UseItemStackEvent.Start event){
+        Optional<Integer> potentialID = registry.getElementIDFromItemStack(event.getItemStackInUse().createStack());
+        if(potentialID.isPresent()){
+            if(registry.elementExists(potentialID.get())){
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @Listener(order = Order.PRE)
+    public void onItemClick(ClickInventoryEvent event){
+
+        if( event instanceof ClickInventoryEvent.Primary ||
+            event instanceof ClickInventoryEvent.Secondary ||
+            event instanceof ClickInventoryEvent.Shift||
+            event instanceof ClickInventoryEvent.Creative){
+
+            ItemStack affected;
+            if(event.getTransactions().isEmpty()){
+                System.out.println(event);
+            }
+            affected= event.getTransactions().get(0).getOriginal().createStack();
+            if(event instanceof  ClickInventoryEvent.Shift || (affected.getType() == ItemTypes.AIR || affected.getType() == ItemTypes.NONE) ){
+                affected = event.getTransactions().get(0).getDefault().createStack();
+            }
+            Optional<Integer> potentialID = registry.getElementIDFromItemStack(affected);
+            if(potentialID.isPresent()){
+                if(registry.elementExists(potentialID.get())){
+                    if(registry.isElementAuto(potentialID.get())){
+                        if(event.getTransactions().get(0).getSlot().parent().getArchetype().equals(InventoryArchetypes.PLAYER)){
+                            if(registry.isElementFixedAuto(potentialID.get())) {
+                                event.setCancelled(true);
+                            }
+                        }else{
+                            event.setCancelled(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 }
