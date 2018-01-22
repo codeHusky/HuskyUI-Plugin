@@ -17,17 +17,40 @@
 
 package com.codehusky.huskyui;
 
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
+import com.codehusky.huskyui.states.action.runnable.RunnableAction;
+import com.codehusky.huskyui.states.action.runnable.UIRunnable;
+import com.codehusky.huskyui.states.element.ActionableElement;
+import com.codehusky.huskyui.states.element.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
+import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.game.GameReloadEvent;
+import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * The HuskyUI class that gets loaded by Sponge at runtime.
@@ -56,12 +79,15 @@ public class HuskyUI {
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.4.1";
+    public static final String PLUGIN_VERSION = "0.5.0";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(HuskyUI.class);
+
+
+    private final ElementRegistry registry = new ElementRegistry();
 
     /**
      * Contains a reference to this (soft) singleton class.
@@ -120,6 +146,102 @@ public class HuskyUI {
      */
     public static Logger getLogger() {
         return LOGGER;
+    }
+
+    /**
+     *
+     * @return HuskyUI Global Element Registry
+     */
+    public ElementRegistry getElementRegistry() {
+        return registry;
+    }
+
+    /*@Listener
+    public void serverStart(GameStartedServerEvent event){
+        RunnableAction testAction = new RunnableAction(registry, ActionType.NONE,"");
+        testAction.setRunnable(context -> {
+            StateContainer container = new StateContainer();
+            Page testPage = Page.builder()
+                    .setTitle(Text.of("WOAH"))
+                    .build("testpage");
+            container.setInitialState(testPage);
+            container.launchFor(context.getObserver());
+        });
+        ActionableElement testElement = new ActionableElement(
+                                            testAction,
+                                            ItemStack.builder()
+                                                    .itemType(ItemTypes.COMPASS)
+                                                    .add(Keys.DISPLAY_NAME, Text.of("COMPASS OWO"))
+                                                    .build());
+
+        registry.registerAutoElement(testElement);
+    }
+
+    @Listener
+    public void reload(GameReloadEvent event){
+
+    }*/
+
+    /**
+     * Handle auto-item delivery to player.
+     *
+     * @param event ClientConnectionEvent Join, when player is created into world.
+     */
+    @Listener
+    public void onPlayerSpawn(ClientConnectionEvent.Join event){
+        HashMap<Integer, ItemStack> items = registry.getAutoItems();
+        HashMap<Integer, Integer> itemPositions = registry.getAutoItemLocations();
+        if(itemPositions.size() > 0) {
+            event.getTargetEntity().getInventory().clear();
+            int slotNum = 0;
+            for (Inventory slot : event.getTargetEntity().getInventory().slots()) {
+                if (itemPositions.containsKey(slotNum)) {
+                    slot.set(items.get(itemPositions.get(slotNum)));
+                }/*else{
+                slot.set(ItemStack.builder().itemType(ItemTypes.BARRIER).add(Keys.DISPLAY_NAME,Text.of("SLOTNUM " + slotNum)).build());
+            }*/
+                slotNum++;
+            }
+            for(int elementID: items.keySet()){
+                if(!itemPositions.containsValue(elementID)){
+                    event.getTargetEntity().getInventory().offer(items.get(elementID));
+                }
+            }
+        }else{
+            int slotNum = 0;
+            for (Inventory slot : event.getTargetEntity().getInventory().slots()) {
+                if (slot.peek().isPresent()) {
+                    Optional<Integer> eleID = registry.getElementIDFromItemStack(slot.peek().get());
+                    if(eleID.isPresent()){
+                        slot.clear();
+                    }
+                }
+                slotNum++;
+            }
+            for(int elementID: items.keySet()){
+                if(!itemPositions.containsValue(elementID)){
+                    event.getTargetEntity().getInventory().offer(items.get(elementID));
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Handler for ActionableElement actions.
+     *
+     * @param event When a player interacts with an item with their secondary mouse button.
+     */
+    @Listener(order= Order.LAST)
+    public void onElementInteract(InteractItemEvent.Secondary event){
+        Optional<Element> ele = registry.getElementFromItemStack(event.getItemStack().createStack());
+        if(ele.isPresent()){
+            if(ele.get() instanceof ActionableElement) {
+                ActionableElement aElement = ((ActionableElement) ele.get()).copy(registry);
+                aElement.getAction().setObserver((Player)event.getCause().root());
+                aElement.getAction().runAction("");
+            }
+        }
     }
 
 }

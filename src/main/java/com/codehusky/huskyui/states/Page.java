@@ -20,17 +20,12 @@ package com.codehusky.huskyui.states;
 import com.codehusky.huskyui.HuskyUI;
 import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
-import com.codehusky.huskyui.states.action.CommandAction;
 import com.codehusky.huskyui.states.element.Element;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
-import org.spongepowered.api.entity.living.monster.Husk;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Event;
-import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
@@ -131,10 +126,14 @@ public class Page extends State {
      * @param inventoryDimension the virtual inventory this Page represents
      * @param title the name of the chest
      * @param emptyStack the ItemStack to be used if filling blank spaces
+     * @param updatable if the Page is updatable or not
+     * @param updateTickRate if the page is updatable, how many ticks will be between updates.
+     * @param updateConsumer the consumer to run if the page is updatable every {@link Page#updateTickRate} ticks.
      * @param fillWhenEmpty whether or not to fill blank spaces
      * @param autoPaging whether or not to let HuskyUI handle paging
      * @param centered whether or not to center ItemStacks
      * @param rows the number of rows within the InventoryDimension
+     * @param parent the parent page of this page.
      */
     public Page(@Nonnull final String id,
                 @Nonnull final Map<Integer, Element> elements,
@@ -567,8 +566,8 @@ public class Page extends State {
          *
          * <p>If unset, this will default to {@link Page#defaultEmptyStack}.</p>
          *
-         * @param emptyStack
-         * @return
+         * @param emptyStack  An ItemStack that will act as the defaultEmptyStack.
+         * @return this PageBuilder
          */
         @Nonnull
         public PageBuilder setEmptyStack(@Nonnull final ItemStack emptyStack) {
