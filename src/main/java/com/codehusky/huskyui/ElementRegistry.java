@@ -200,11 +200,24 @@ public class ElementRegistry extends StateContainer {
         return elements.containsKey(id);
     }
 
+    /**
+     * Check to see if an element at a given id is auto-inv
+     *
+     * @param id element id
+     * @return if element is auto-inv
+     */
     public boolean isElementAuto(int id){
         if(!elements.containsKey(id)) throw new RuntimeException("Cannot check if element is auto: Element id \"" + id + "\" is not registered.");
         return autoInvElements.contains(id);
     }
 
+    /**
+     * Check to see if an element is in a fixed position<br>
+     * Accessing this with a non-auto-inv item will throw a runtime exception.
+     *
+     * @param id element id
+     * @return if element is fixed position
+     */
     public boolean isElementFixedAuto(int id){
         if(!isElementAuto(id)) throw new RuntimeException("Cannot check if element is fixed auto: Element \"" + id + "\"is not auto.");
         return autoInvLocations.values().contains(id);

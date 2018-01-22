@@ -82,7 +82,7 @@ public class HuskyUI {
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.5.0";
+    public static final String PLUGIN_VERSION = "0.5.1";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
@@ -274,6 +274,11 @@ public class HuskyUI {
         }
     }
 
+
+    /**
+     * Handle item drops
+     * @param event dispense event
+     */
     @Listener
     public void onItemDrop(DropItemEvent.Dispense event){
         for(Entity e :event.getEntities()){
@@ -290,6 +295,10 @@ public class HuskyUI {
         }
     }
 
+    /**
+     * Handle item usage
+     * @param event useitemstackevent.start
+     */
     @Listener
     public void onItemUse(UseItemStackEvent.Start event){
         Optional<Integer> potentialID = registry.getElementIDFromItemStack(event.getItemStackInUse().createStack());
@@ -300,6 +309,10 @@ public class HuskyUI {
         }
     }
 
+    /**
+     * Handle inventory clicks
+     * @param event clickinvevent
+     */
     @Listener(order = Order.PRE)
     public void onItemClick(ClickInventoryEvent event){
 
