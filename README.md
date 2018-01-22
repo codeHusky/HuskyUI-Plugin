@@ -16,7 +16,26 @@ RunnableAction testAction = new RunnableAction(registry, ActionType.NONE,"");
 testAction.setRunnable(context -> {
     StateContainer container = new StateContainer();
     Page testPage = Page.builder()
-            .setTitle(Text.of("WOAH"))
+            .setTitle(Text.of(TextColors.GOLD,"Navigator"))
+            .setAutoPaging(true)
+            .addElement(new Element(
+                    ItemStack.builder()
+                        .itemType(ItemTypes.DIAMOND)
+                        .add(Keys.DISPLAY_NAME,Text.of(TextColors.BLUE,"Diamond Rush"))
+                        .build()
+                    ))
+            .addElement(new Element(
+                    ItemStack.builder()
+                            .itemType(ItemTypes.FIREWORKS)
+                            .add(Keys.DISPLAY_NAME,Text.of(TextColors.RED,"Fireworks Palooza"))
+                            .build()
+            ))
+            .addElement(new Element(
+                    ItemStack.builder()
+                            .itemType(ItemTypes.MINECART)
+                            .add(Keys.DISPLAY_NAME,Text.of(TextColors.GRAY,"Roller Coasters"))
+                            .build()
+            ))
             .build("testpage");
     container.setInitialState(testPage);
     container.launchFor(context.getObserver());
@@ -25,11 +44,24 @@ ActionableElement testElement = new ActionableElement(
                                     testAction,
                                     ItemStack.builder()
                                             .itemType(ItemTypes.COMPASS)
-                                            .add(Keys.DISPLAY_NAME, Text.of("hub compass thing"))
+                                            .add(Keys.DISPLAY_NAME, Text.of(TextColors.GOLD,"Navigator"))
                                             .build());
 
-registry.registerAutoElement(4,testElement); //places compass element in middle of hotbar
+HuskyUI.getElementRegistry().registerAutoElement(4,testElement);
+ItemStack litMC = ItemStack.builder()
+        .itemType(ItemTypes.REDSTONE_TORCH)
+        .add(Keys.DISPLAY_NAME,Text.of(TextColors.RED,"LitMC"))
+        .build();
+HuskyUI.getElementRegistry().registerAutoElement(0,new Element(litMC));
+HuskyUI.getElementRegistry().registerAutoElement(8,new Element(litMC));
+
+HuskyUI.getElementRegistry().registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 1")).build()));
+HuskyUI.getElementRegistry().registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 2")).build()));
+HuskyUI.getElementRegistry().registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 3")).build()));
 ```
+**Result**
+
+![img](https://i.imgur.com/DvCy36o.png)
 
 ### Generic Example
 ```java
