@@ -18,7 +18,7 @@ import java.util.Optional;
  * Auto-Inv and methods referencing Auto are talking about Auto-Inventory Delivery of the element.
  * Elements delivered to player inventories will be placed in the first available slot unless specified otherwise.
  * <br><br>
- * <span style="color:red"><h2>!! WARNING !!</h2></span>
+ * <div style="color:red"><h2>!! WARNING !!</h2></div>
  * <b>Enforcing a slot id for an auto element will result on player's inventories being cleared every time they log in.</b><br>
  * <b>Please use this feature with care! By default, you should not do this. Make it controlled via config (default off) or be very explicit in disclosure of this feature.</b><br>
  * <b>Improper warning of this feature could be disastrous for some servers.</b><br>
