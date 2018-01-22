@@ -59,7 +59,7 @@ HuskyUI.getElementRegistry().registerAutoElement(new Element(ItemStack.builder()
 HuskyUI.getElementRegistry().registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 2")).build()));
 HuskyUI.getElementRegistry().registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 3")).build()));
 ```
-**Result**
+**Result** (with some movement of the movable carts.)
 
 ![img](https://i.imgur.com/DvCy36o.png)
 
