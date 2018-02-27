@@ -6,17 +6,21 @@ import org.spongepowered.api.Sponge;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
-
+/**
+ * This class is used to handle situations requiring command execution by an item.
+ * You should not use this class to open another UI state container, use a {@link com.codehusky.huskyui.states.action.runnable.RunnableAction} for that.
+ */
 public class CommandAction extends Action {
     @Nonnull private final String command;
     @Nonnull private CommandReceiver receiver;
 
     /**
-     * Constructs an Action.
+     * Constructs a CommandAction.
      *
      * @param container the {@link StateContainer} that is responsible for this Action
      * @param type      the type of Action taking place
      * @param goalState the intended {@link State}
+     * @param command   The command intended to run
      */
     public CommandAction(@Nonnull StateContainer container, @Nonnull ActionType type, @Nonnull String goalState, @Nonnull final String command) {
         super(container, type, goalState);
@@ -24,6 +28,15 @@ public class CommandAction extends Action {
         this.receiver = CommandReceiver.SERVER;
     }
 
+    /**
+     * Constructs a CommandAction.
+     *
+     * @param container the {@link StateContainer} that is responsible for this Action
+     * @param type      the type of Action taking place
+     * @param goalState the intended {@link State}
+     * @param command   the command intended to run
+     * @param receiver  the {@link CommandReceiver} intended to run the command
+     */
     public CommandAction(@Nonnull StateContainer container, @Nonnull ActionType type, @Nonnull String goalState,
                          @Nonnull final String command, @Nonnull CommandReceiver receiver) {
         super(container, type, goalState);
@@ -48,6 +61,11 @@ public class CommandAction extends Action {
         return receiver;
     }
 
+    /**
+     * Set the {@link CommandReceiver} of the CommandAction
+     *
+     * @param receiver   the {@link CommandReceiver} that will replace the previously specified one.
+     */
     public void setReceiver(@Nonnull CommandReceiver receiver) {
         this.receiver = receiver;
     }
