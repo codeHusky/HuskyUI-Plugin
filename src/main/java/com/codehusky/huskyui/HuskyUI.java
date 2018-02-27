@@ -32,6 +32,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.NamedCause;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.cause.Root;
@@ -131,6 +132,10 @@ public class HuskyUI {
         return HuskyUI.instance;
     }
 
+    public Cause getGenericCause() {
+        return genericCause;
+    }
+
     /**
      * Gets HuskyUI's plugin container created by Sponge.
      *
@@ -158,7 +163,10 @@ public class HuskyUI {
     public ElementRegistry getElementRegistry() {
         return registry;
     }
-
+    @Listener
+    public void serverStarting(GameStartedServerEvent event){
+        this.genericCause = Cause.of(NamedCause.of("PluginContainer", this.pluginContainer));
+    }
     /*@Listener
     public void serverStart(GameStartedServerEvent event){
         RunnableAction testAction = new RunnableAction(registry, ActionType.NONE,"");
@@ -326,7 +334,7 @@ public class HuskyUI {
                 System.out.println(event);
             }
             affected= event.getTransactions().get(0).getOriginal().createStack();
-            if(event instanceof  ClickInventoryEvent.Shift || (affected.getType() == ItemTypes.AIR || affected.getType() == ItemTypes.NONE) ){
+            if(event instanceof  ClickInventoryEvent.Shift || (affected.getItem() == ItemTypes.AIR || affected.getItem() == ItemTypes.NONE) ){
                 affected = event.getTransactions().get(0).getDefault().createStack();
             }
             Optional<Integer> potentialID = registry.getElementIDFromItemStack(affected);

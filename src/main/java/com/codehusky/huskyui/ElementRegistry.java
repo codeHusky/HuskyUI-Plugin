@@ -182,7 +182,7 @@ public class ElementRegistry extends StateContainer {
      * @return ElementID, if it exists. This ID may not actually be associated with an Element, so please verify that before use with {@link #elementExists(int)}.
      */
     public Optional<Integer> getElementIDFromItemStack(ItemStack stack){
-        if(stack.getType() == ItemTypes.AIR || stack.getType() == ItemTypes.NONE) return Optional.empty();
+        if(stack.getItem() == ItemTypes.AIR || stack.getItem() == ItemTypes.NONE) return Optional.empty();
         Optional<Object> optRegID = stack.toContainer().get(DataQuery.of("UnsafeData", "regid"));
         if(optRegID.isPresent()){
             return Optional.of((int)optRegID.get());

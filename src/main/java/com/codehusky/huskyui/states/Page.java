@@ -270,7 +270,7 @@ public class Page extends State {
         final Inventory inventory = Inventory.builder()
                 .property("type", new StringProperty("huskui-page"))
                 .property("id", new StringProperty(getId()))
-                .property(InventoryDimension.PROPERTY_NAM, this.inventoryDimension)
+                .property(InventoryDimension.PROPERTY_NAME, this.inventoryDimension)
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
                         event.setCancelled(true);
