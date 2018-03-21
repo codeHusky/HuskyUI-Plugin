@@ -17,41 +17,30 @@
 
 package com.codehusky.huskyui;
 
-import com.codehusky.huskyui.states.Page;
-import com.codehusky.huskyui.states.action.ActionType;
-import com.codehusky.huskyui.states.action.runnable.RunnableAction;
-import com.codehusky.huskyui.states.action.runnable.UIRunnable;
 import com.codehusky.huskyui.states.element.ActionableElement;
 import com.codehusky.huskyui.states.element.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.entity.SpawnEntityEvent;
-import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
-import org.spongepowered.api.event.filter.cause.Root;
-import org.spongepowered.api.event.game.GameReloadEvent;
-import org.spongepowered.api.event.game.state.GameStartedServerEvent;
-import org.spongepowered.api.event.item.inventory.*;
+import org.spongepowered.api.event.item.inventory.ClickInventoryEvent;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
+import org.spongepowered.api.event.item.inventory.InteractItemEvent;
+import org.spongepowered.api.event.item.inventory.UseItemStackEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.InventoryArchetypes;
 import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -66,9 +55,6 @@ import java.util.Optional;
         description = "A framework for Inventory UI.")
 public class HuskyUI {
 
-    @Inject
-    private Metrics metrics;
-
     /**
      * The ID of HuskyUI for Sponge.
      */
@@ -82,7 +68,7 @@ public class HuskyUI {
     /**
      * The Version of HuskyUI for Sponge.
      */
-    public static final String PLUGIN_VERSION = "0.5.1";
+    public static final String PLUGIN_VERSION = "0.5.2";
 
     /**
      * The HuskyUI {@link Logger} used throughout the plugin.
@@ -315,35 +301,33 @@ public class HuskyUI {
      */
     @Listener(order = Order.PRE)
     public void onItemClick(ClickInventoryEvent event){
+        try {
+            if (event instanceof ClickInventoryEvent.Primary ||
+                    event instanceof ClickInventoryEvent.Secondary ||
+                    event instanceof ClickInventoryEvent.Shift ||
+                    event instanceof ClickInventoryEvent.Creative) {
 
-        if( event instanceof ClickInventoryEvent.Primary ||
-            event instanceof ClickInventoryEvent.Secondary ||
-            event instanceof ClickInventoryEvent.Shift||
-            event instanceof ClickInventoryEvent.Creative){
-
-            ItemStack affected;
-            if(event.getTransactions().isEmpty()){
-                System.out.println(event);
-            }
-            affected= event.getTransactions().get(0).getOriginal().createStack();
-            if(event instanceof  ClickInventoryEvent.Shift || (affected.getType() == ItemTypes.AIR || affected.getType() == ItemTypes.NONE) ){
-                affected = event.getTransactions().get(0).getDefault().createStack();
-            }
-            Optional<Integer> potentialID = registry.getElementIDFromItemStack(affected);
-            if(potentialID.isPresent()){
-                if(registry.elementExists(potentialID.get())){
-                    if(registry.isElementAuto(potentialID.get())){
-                        if(event.getTransactions().get(0).getSlot().parent().getArchetype().equals(InventoryArchetypes.PLAYER)){
-                            if(registry.isElementFixedAuto(potentialID.get())) {
+                ItemStack affected;
+                affected = event.getTransactions().get(0).getOriginal().createStack();
+                if (event instanceof ClickInventoryEvent.Shift || (affected.getType() == ItemTypes.AIR || affected.getType() == ItemTypes.NONE)) {
+                    affected = event.getTransactions().get(0).getDefault().createStack();
+                }
+                Optional<Integer> potentialID = registry.getElementIDFromItemStack(affected);
+                if (potentialID.isPresent()) {
+                    if (registry.elementExists(potentialID.get())) {
+                        if (registry.isElementAuto(potentialID.get())) {
+                            if (event.getTransactions().get(0).getSlot().parent().getArchetype().equals(InventoryArchetypes.PLAYER)) {
+                                if (registry.isElementFixedAuto(potentialID.get())) {
+                                    event.setCancelled(true);
+                                }
+                            } else {
                                 event.setCancelled(true);
                             }
-                        }else{
-                            event.setCancelled(true);
                         }
                     }
                 }
             }
-        }
+        }catch(Exception ignored){}
     }
 
 
