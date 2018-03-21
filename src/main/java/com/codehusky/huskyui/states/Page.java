@@ -380,7 +380,9 @@ public class Page extends State {
     }
 
     public void interrupt(){
-        this.interrupt.run();
+        if(this.interrupt != null) {
+            this.interrupt.run();
+        }
     }
 
     /**
@@ -407,6 +409,7 @@ public class Page extends State {
         builder.setCentered(this.centered);
         builder.setUpdateTickRate(updateTickRate);
         builder.setUpdater(updateConsumer);
+        builder.setInterrupt(interrupt);
         builder.setUpdatable(updatable);
 
         final Page page = builder.build(this.getId());
