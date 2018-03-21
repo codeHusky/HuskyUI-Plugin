@@ -20,6 +20,7 @@ package com.codehusky.huskyui.states;
 import com.codehusky.huskyui.HuskyUI;
 import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.element.ActionableElement;
 import com.codehusky.huskyui.states.element.Element;
 import com.google.common.collect.Maps;
 import org.spongepowered.api.data.DataQuery;
@@ -36,7 +37,6 @@ import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
-import com.codehusky.huskyui.states.element.ActionableElement;
 import org.spongepowered.api.text.format.TextStyles;
 
 import javax.annotation.Nonnull;
@@ -116,6 +116,7 @@ public class Page extends State {
     private boolean updatable;
     private int updateTickRate;
     private Consumer<Page> updateConsumer;
+    private Runnable interrupt;
     private Inventory cachedInventory;
 
     /**
@@ -143,6 +144,7 @@ public class Page extends State {
                 final boolean updatable,
                 final int updateTickRate,
                 final Consumer<Page> updateConsumer,
+                final Runnable interrupt,
                 final boolean fillWhenEmpty,
                 final boolean autoPaging,
                 final boolean centered,
@@ -160,6 +162,7 @@ public class Page extends State {
         this.updatable = updatable;
         this.updateTickRate = updateTickRate;
         this.updateConsumer = updateConsumer;
+        this.interrupt = interrupt;
         cachedInventory = null;
         this.setParent(parent);
     }
@@ -376,6 +379,10 @@ public class Page extends State {
         }
     }
 
+    public void interrupt(){
+        this.interrupt.run();
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -485,6 +492,8 @@ public class Page extends State {
 
         private Consumer<Page> updaterConsumer;
 
+        private Runnable interrupt;
+
         @Nullable
         private String parent;
 
@@ -503,6 +512,7 @@ public class Page extends State {
             this.updatable = false;
             this.updateTickRate = 1;
             this.updaterConsumer = null;
+            this.interrupt = null;
             this.parent = null;
         }
 
@@ -629,6 +639,12 @@ public class Page extends State {
             return this;
         }
 
+        @Nonnull
+        public PageBuilder setInterrupt(final Runnable interrupt){
+            this.interrupt = interrupt;
+            return this;
+        }
+
         /**
          * Builds this PageBuilder to get a new {@link Page} object.
          *
@@ -646,6 +662,7 @@ public class Page extends State {
                     this.updatable,
                     this.updateTickRate,
                     this.updaterConsumer,
+                    this.interrupt,
                     this.fillWhenEmpty,
                     this.autoPaging,
                     this.centered,

@@ -24,7 +24,6 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.item.inventory.entity.PlayerInventory;
 import org.spongepowered.api.item.inventory.property.StringProperty;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
@@ -216,6 +215,7 @@ public class StateContainer {
             Page page = (Page) state;
             Inventory toShow = page.getPageView();
             if(this.scheduledTask != null){
+                page.interrupt();
                 this.scheduledTask.cancel();
                 this.scheduledTask = null;
             }
@@ -225,6 +225,7 @@ public class StateContainer {
                     if(page.getObserver().getOpenInventory().isPresent()) {
                         Container container = page.getObserver().getOpenInventory().get();
                         if (container.getProperties(StringProperty.class).size() != 2) {
+                            page.interrupt();
                             scheduledTask.cancel();
                             scheduledTask = null;
                             return;
@@ -233,6 +234,7 @@ public class StateContainer {
                             StringProperty property2 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[1]);
                             if(!property2.getValue().equals(page.getId())) {
                                 if (!property1.getValue().equals(page.getId())) {
+                                    page.interrupt();
                                     scheduledTask.cancel();
                                     scheduledTask = null;
                                     return;
