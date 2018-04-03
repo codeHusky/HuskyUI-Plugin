@@ -405,6 +405,7 @@ public class Page extends State {
         }
 
         builder.setInventoryDimension(this.inventoryDimension); // InventoryDimension is Immutable.
+        builder.setInventoryArchetype(this.inventoryArchetype);
         builder.setTitle(this.title); // Text is Immutable
         builder.setEmptyStack(this.emptyStack.copy());
         builder.setFillWhenEmpty(this.fillWhenEmpty);
@@ -668,14 +669,14 @@ public class Page extends State {
          */
         public Page build(@Nonnull final String id) {
             final int rows = (int) Math.ceil(((double) this.elements.size()) / 9d);
+            InventoryDimension real = (this.inventoryDimension == null ?
+                    (this.autoPaging) ?
+                            InventoryDimension.of(9, rows + 1) :
+                            InventoryDimension.of(9,4)
+                    : this.inventoryDimension);
             return new Page(id,
                     this.elements,
-                    (
-                            (this.autoPaging) ?
-                                    InventoryDimension.of(9, rows + 1) :
-                                    ((this.inventoryDimension != null) ?
-                                            this.inventoryDimension :
-                                            InventoryDimension.of(9, rows + 1))),
+                    real,
                     this.inventoryArchetype,
                     this.title,
                     this.emptyStack,
