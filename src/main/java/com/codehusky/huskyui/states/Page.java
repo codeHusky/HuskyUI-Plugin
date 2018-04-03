@@ -29,9 +29,7 @@ import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
 import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.item.inventory.ItemStack;
-import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.item.inventory.*;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.StringProperty;
@@ -72,6 +70,8 @@ public class Page extends State {
      * will be placed when the inventory is opened by a {@link Player}.
      */
     @Nonnull private final InventoryDimension inventoryDimension;
+
+    @Nonnull private final InventoryArchetype inventoryArchetype;
 
     /**
      * The name of the Chest to be opened, because IDs
@@ -139,6 +139,7 @@ public class Page extends State {
     public Page(@Nonnull final String id,
                 @Nonnull final Map<Integer, Element> elements,
                 @Nonnull final InventoryDimension inventoryDimension,
+                @Nonnull final InventoryArchetype inventoryArchetype,
                 @Nonnull final Text title,
                 @Nonnull final ItemStack emptyStack,
                 final boolean updatable,
@@ -153,6 +154,7 @@ public class Page extends State {
         super(id);
         this.elements = elements;
         this.inventoryDimension = inventoryDimension;
+        this.inventoryArchetype = inventoryArchetype;
         this.title = title;
         this.emptyStack = emptyStack;
         this.fillWhenEmpty = fillWhenEmpty;
@@ -274,6 +276,7 @@ public class Page extends State {
                 .property("type", new StringProperty("huskui-page"))
                 .property("id", new StringProperty(getId()))
                 .property(InventoryDimension.PROPERTY_NAME, this.inventoryDimension)
+                .of(this.inventoryArchetype)
                 .listener(InteractInventoryEvent.class, event -> {
                     if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
                         event.setCancelled(true);
@@ -449,6 +452,8 @@ public class Page extends State {
          */
         private InventoryDimension inventoryDimension;
 
+        private InventoryArchetype inventoryArchetype;
+
         /**
          * The name of the Chest to be opened, because IDs
          * typically aren't very visually appealing.
@@ -517,6 +522,7 @@ public class Page extends State {
             this.updaterConsumer = null;
             this.interrupt = null;
             this.parent = null;
+            this.inventoryArchetype = InventoryArchetypes.CHEST;
         }
 
         /**
@@ -553,6 +559,12 @@ public class Page extends State {
         @Nonnull
         public PageBuilder setInventoryDimension(@Nonnull final InventoryDimension inventoryDimension) {
             this.inventoryDimension = inventoryDimension;
+            return this;
+        }
+
+        @Nonnull
+        public PageBuilder setInventoryArchetype(@Nonnull final InventoryArchetype inventoryArchetype){
+            this.inventoryArchetype = inventoryArchetype;
             return this;
         }
 
@@ -658,8 +670,13 @@ public class Page extends State {
             final int rows = (int) Math.ceil(((double) this.elements.size()) / 9d);
             return new Page(id,
                     this.elements,
-                    (this.autoPaging ? InventoryDimension.of(9, rows + 1) : this.inventoryDimension != null ?
-                            this.inventoryDimension : InventoryDimension.of(9, rows + 1)),
+                    (
+                            (this.autoPaging) ?
+                                    InventoryDimension.of(9, rows + 1) :
+                                    ((this.inventoryDimension != null) ?
+                                            this.inventoryDimension :
+                                            InventoryDimension.of(9, rows + 1))),
+                    this.inventoryArchetype,
                     this.title,
                     this.emptyStack,
                     this.updatable,
