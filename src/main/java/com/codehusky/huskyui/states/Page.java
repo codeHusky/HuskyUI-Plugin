@@ -316,15 +316,7 @@ public class Page extends State {
         int num = 0;
         for (final Inventory slot : inventory.slots()) {
             if (this.autoPaging) {
-                if (this.elements.size() > num) {
-                    /*if (this.centered && (num >= ((this.rows - 1) * 9))) {
-                        if (this.elements.size() %2 == 1) {
-                            // TODO: This seems to be unused?
-                            // Yes it is. Indev stuff.
-                            int width = this.elements.size() % 9;
-                        }
-                    }*/
-
+                if (this.elements.containsKey(num)) {
                     slot.set(ItemStack.builder()
                             .fromContainer(this.elements.get(num).getItem()
                                     .toContainer()
@@ -668,7 +660,7 @@ public class Page extends State {
          * @return a new Page
          */
         public Page build(@Nonnull final String id) {
-            final int rows = (int) Math.ceil(((double) this.elements.size()) / 9d);
+            final int rows = (this.inventoryDimension == null) ? Math.min(5,(int) Math.ceil(((double) this.elements.size()) / 9d)) : this.inventoryDimension.getRows()-1;
             InventoryDimension real = (this.inventoryDimension == null ?
                     (this.autoPaging) ?
                             InventoryDimension.of(9, rows + 1) :
