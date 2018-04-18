@@ -20,8 +20,10 @@ package com.codehusky.huskyui.states.action.runnable;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.action.Action;
 import com.codehusky.huskyui.states.action.ActionType;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -92,13 +94,13 @@ public class RunnableAction extends Action {
      * @param currentState the current State before the Action is performed
      */
     @Override
-    public void runAction(@Nonnull final String currentState) {
+    public void runAction(@Nonnull final String currentState, Inventory inventory) {
         if (this.runnable != null) {
             this.runnable.run(this);
         } else {
             this.getObserver().sendMessage(Text.of(TextColors.RED, "Cannot run a null action!"));
         }
-        super.runAction(currentState);
+        super.runAction(currentState,inventory);
     }
 
     /**

@@ -17,15 +17,17 @@
 
 package com.codehusky.huskyui.states.action;
 
-import com.codehusky.huskyui.HuskyUI;
 import com.codehusky.huskyui.InventoryUtil;
 import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
 import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
+import java.util.function.Consumer;
 
 /**
  * This class' purpose is to be used to determine the movement
@@ -127,7 +129,7 @@ public class Action {
      *
      * @param currentState the current State before the Action is performed
      */
-    public void runAction(@Nonnull final String currentState) {
+    public void runAction(@Nonnull final String currentState, final Inventory inventory) {
         switch (this.type) {
             case CLOSE:
                 InventoryUtil.close(this.observer);
@@ -152,6 +154,17 @@ public class Action {
                 break;
             case NONE:
                 // do nothing
+                break;
+            case REFRESH:
+                Page page = ((Page)getContainer().getState(currentState));
+                try {
+                    Consumer<Page> goo = page.getUpdateConsumer();
+                    if (goo != null) {
+                        goo.accept(page);
+                    }
+                }catch (Exception e){
+                    this.observer.sendMessage(Text.of(TextColors.RED, "Impossible refresh action - closing broken State."));
+                }
                 break;
             default:
                 this.observer.sendMessage(Text.of("??"));

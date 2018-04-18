@@ -39,6 +39,8 @@ public enum ActionType {
      */
     NORMAL,
 
+    REFRESH,
+
     /**
      * This is a false flag operation. We've been swindled!
      * Quick, scramble the jets!

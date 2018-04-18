@@ -262,16 +262,25 @@ public class Page extends State {
     public void tickIncrement() {
         ticks++;
     }
+
+    @Nonnull
+    public Inventory getPageView() {
+        return getPageView(0);
+    }
     /**
      * Generates the {@link Inventory} for this Page.
      *
      * @return the Inventory for this Page
      */
     @Nonnull
-    public Inventory getPageView() {
+    public Inventory getPageView(int pagenum) {
         if(updatable && cachedInventory != null){
             return cachedInventory;
         }
+        int maxSize = (this.inventoryDimension.getColumns() * (this.inventoryDimension.getRows()-1));
+        int pageCount = (this.elements.size() / maxSize) + 1;
+        System.out.println(pageCount);
+        System.out.println(maxSize + "m");
         final Inventory inventory = Inventory.builder()
                 .property("type", new StringProperty("huskui-page"))
                 .property("id", new StringProperty(getId()))
@@ -290,18 +299,22 @@ public class Page extends State {
                         event.getCursorTransaction().getDefault().toContainer().get(DataQuery.of("UnsafeData", "slotnum")).ifPresent(slot -> {
                             final int num = (int) slot;
                             if (this.autoPaging) {
-                                if (num == -1) {
+                                if (num == -1) { //close/back
                                     if(hasParent()) {
                                         this.getContainer().openState(this.getObserver(), this.getParent());
                                     }else{
                                         InventoryUtil.close(this.getObserver());
                                     }
-                                } else if (this.elements.get(num) instanceof ActionableElement) {
-                                    ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
+                                } else if(num == -2){ // previous page
+                                    this.getContainer().openState(this.getObserver(), this.getId() + "#" + (pagenum-1));
+                                } else if(num == -3) { // next page
+                                    this.getContainer().openState(this.getObserver(), this.getId() + "#" + (pagenum+1));
+                                }else if (this.elements.get(num) instanceof ActionableElement) {
+                                    ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId(),getObserver().getOpenInventory().get());
                                 }
                             } else {
                                 if (this.elements.get(num) instanceof ActionableElement) {
-                                    ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId());
+                                    ((ActionableElement) this.elements.get(num)).getAction().runAction(this.getId(),getObserver().getOpenInventory().get());
                                 }
                             }
                         });
@@ -316,26 +329,43 @@ public class Page extends State {
         int num = 0;
         for (final Inventory slot : inventory.slots()) {
             if (this.autoPaging) {
-                if (this.elements.containsKey(num)) {
+                if(num == (this.rows * 9) && pageCount > 1 && pagenum > 0){
                     slot.set(ItemStack.builder()
-                            .fromContainer(this.elements.get(num).getItem()
+                            .fromContainer(ItemStack.builder()
+                                    .itemType(ItemTypes.MAP)
+                                    .add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, "Previous"))
+                                    .build()
                                     .toContainer()
-                                    .set(DataQuery.of("UnsafeData", "slotnum"), num))
+                                    .set(DataQuery.of("UnsafeData", "slotnum"), -2))
+                            .build());
+                }else if(num == (this.rows * 9) + 8 && pageCount > 1 && pagenum < pageCount-1){
+                    slot.set(ItemStack.builder()
+                            .fromContainer(ItemStack.builder()
+                                    .itemType(ItemTypes.MAP)
+                                    .add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, "Next"))
+                                    .build()
+                                    .toContainer()
+                                    .set(DataQuery.of("UnsafeData", "slotnum"), -3))
+                            .build());
+                }else if (num == (this.rows * 9) + 4) {
+                    slot.set(ItemStack.builder()
+                            .fromContainer(ItemStack.builder()
+                                    .itemType(ItemTypes.BARRIER)
+                                    .add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, (hasParent())?"Back":"Close"))
+                                    .build()
+                                    .toContainer()
+                                    .set(DataQuery.of("UnsafeData", "slotnum"), -1))
                             .build());
                 } else if (num > (this.rows * 9) - 1) {
-                    if (num == (this.rows * 9) + 4) {
-                        slot.set(ItemStack.builder()
-                                .fromContainer(ItemStack.builder()
-                                        .itemType(ItemTypes.BARRIER)
-                                        .add(Keys.DISPLAY_NAME, Text.of(TextStyles.RESET, TextColors.WHITE, (hasParent())?"Back":"Close"))
-                                        .build()
-                                        .toContainer()
-                                        .set(DataQuery.of("UnsafeData", "slotnum"), -1))
-                                .build());
-                    }else{
-                        slot.set(emptyStack);
-                    }
+                    slot.set(emptyStack);
+                } else if (this.elements.containsKey(num + (pagenum * maxSize))) {
+                     slot.set(ItemStack.builder()
+                             .fromContainer(this.elements.get(num + (pagenum * maxSize)).getItem()
+                                     .toContainer()
+                                     .set(DataQuery.of("UnsafeData", "slotnum"), num + (pagenum * maxSize)))
+                             .build());
                 }
+
             } else if (elements.containsKey(num)) { // Standard Situations
                 slot.set(ItemStack.builder()
                         .fromContainer(elements.get(num).getItem().toContainer()

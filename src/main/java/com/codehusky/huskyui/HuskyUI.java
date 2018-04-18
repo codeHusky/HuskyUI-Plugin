@@ -165,14 +165,135 @@ public class HuskyUI {
                                     .add(Keys.DISPLAY_NAME,Text.of(TextColors.RED,"Fireworks Palooza"))
                                     .build()
                     ))
-                    .addElement(new Element(
+                    .addElement(new ActionableElement(new RunnableAction(container, ActionType.NONE, "", new UIRunnable() {
+                        @Override
+                        public void run(@Nonnull RunnableAction context) {
+                            context.getContainer().openState(context.getObserver(),"satan");
+                        }
+                    }),
                             ItemStack.builder()
                                     .itemType(ItemTypes.MINECART)
                                     .add(Keys.DISPLAY_NAME,Text.of(TextColors.GRAY,"Roller Coasters"))
                                     .build()
                     ))
                     .build("testpage");
+            Page lilMeme = Page.builder()
+                    .setTitle(Text.of("sata"))
+                    .setAutoPaging(true)
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    .addElement(new Element(ItemStack.of(ItemTypes.GLASS,1)))
+                    //\\
+                    .setParent("testpage")
+                    .build("satan");
             container.setInitialState(testPage);
+            container.addState(lilMeme);
             container.launchFor(context.getObserver());
         });
         ActionableElement testElement = new ActionableElement(
@@ -182,13 +303,13 @@ public class HuskyUI {
                                                     .add(Keys.DISPLAY_NAME, Text.of(TextColors.GOLD,"Navigator"))
                                                     .build());
 
-        registry.registerAutoElement(4,testElement);
+        registry.registerAutoElement(29,testElement);
         ItemStack litMC = ItemStack.builder()
                 .itemType(ItemTypes.REDSTONE_TORCH)
                 .add(Keys.DISPLAY_NAME,Text.of(TextColors.RED,"LitMC"))
                 .build();
-        registry.registerAutoElement(0,new Element(litMC));
-        registry.registerAutoElement(8,new Element(litMC));
+        registry.registerAutoElement(31,new Element(litMC));
+        registry.registerAutoElement(35,new Element(litMC));
 
         registry.registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 1")).build()));
         registry.registerAutoElement(new Element(ItemStack.builder().itemType(ItemTypes.MINECART).add(Keys.DISPLAY_NAME,Text.of("movable 2")).build()));
@@ -210,9 +331,7 @@ public class HuskyUI {
             for (Inventory slot : event.getTargetEntity().getInventory().slots()) {
                 if (itemPositions.containsKey(slotNum)) {
                     slot.set(items.get(itemPositions.get(slotNum)));
-                }/*else{
-                slot.set(ItemStack.builder().itemType(ItemTypes.BARRIER).add(Keys.DISPLAY_NAME,Text.of("SLOTNUM " + slotNum)).build());
-            }*/
+                }
                 slotNum++;
             }
             for(int elementID: items.keySet()){
@@ -253,9 +372,10 @@ public class HuskyUI {
                 if (ele.get() instanceof ActionableElement) {
                     ActionableElement aElement = ((ActionableElement) ele.get()).copy(registry);
                     aElement.getAction().setObserver((Player) event.getCause().root());
-                    aElement.getAction().runAction("");
+                    aElement.getAction().runAction("",null);
                 }
             }
+
             event.setCancelled(true);
         }
     }
@@ -309,7 +429,7 @@ public class HuskyUI {
 
                 ItemStack affected;
                 affected = event.getTransactions().get(0).getOriginal().createStack();
-                if (event instanceof ClickInventoryEvent.Shift || (affected.getType() == ItemTypes.AIR || affected.getType() == ItemTypes.NONE)) {
+                if (event instanceof ClickInventoryEvent.Shift && (affected.getType() == ItemTypes.AIR || affected.getType() == ItemTypes.NONE)) {
                     affected = event.getTransactions().get(0).getDefault().createStack();
                 }
                 Optional<Integer> potentialID = registry.getElementIDFromItemStack(affected);

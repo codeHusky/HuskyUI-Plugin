@@ -3,8 +3,8 @@ package com.codehusky.huskyui.states.action;
 import com.codehusky.huskyui.StateContainer;
 import com.codehusky.huskyui.states.State;
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.item.inventory.Inventory;
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 /**
  * This class is used to handle situations requiring command execution by an item.
@@ -45,10 +45,10 @@ public class CommandAction extends Action {
     }
 
     @Override
-    public void runAction(@Nonnull String currentState) {
+    public void runAction(@Nonnull String currentState, Inventory inventory) {
         Sponge.getCommandManager().process(this.receiver == CommandReceiver.SERVER ?
             Sponge.getServer().getConsole() : getObserver(), this.command);
-        super.runAction(currentState);
+        super.runAction(currentState,inventory);
     }
 
     @Nonnull

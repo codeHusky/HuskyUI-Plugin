@@ -197,7 +197,17 @@ public class StateContainer {
      * @param id the ID of the State being requested
      */
     public void openState(@Nonnull final Player player, @Nonnull final String id) {
-        final State state = this.copy().states.get(id);
+        int pagenum = 0;
+        String pageID = id;
+        if(id.contains("#")){
+            try {
+                pagenum = Integer.valueOf(id.split("#")[1]);
+                pageID=id.split("#")[0];
+            }catch(Exception e){
+                fail(player, "Attempted to open an invalid pagenum!");
+            }
+        }
+        final State state = this.copy().states.get(pageID);
 
         if (state == null) {
             fail(player, "Attempted to open a nonexistent state!");
@@ -211,9 +221,9 @@ public class StateContainer {
         state.setObserver(player);
 
         if (state instanceof Page) {
-            InventoryUtil.close(player);
+            //InventoryUtil.close(player);
             Page page = (Page) state;
-            Inventory toShow = page.getPageView();
+            Inventory toShow = page.getPageView(pagenum);
             if(this.scheduledTask != null){
                 page.interrupt();
                 this.scheduledTask.cancel();
