@@ -277,7 +277,7 @@ public class Page extends State {
         if(updatable && cachedInventory != null){
             return cachedInventory;
         }
-        int maxSize = (this.inventoryDimension.getColumns() * (this.inventoryDimension.getRows()-1));
+        int maxSize = Math.max(1,(this.inventoryDimension.getColumns() * (this.inventoryDimension.getRows()-1)));
         int pageCount = (this.elements.size() / maxSize) + 1;
         System.out.println(pageCount);
         System.out.println(maxSize + "m");
