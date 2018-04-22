@@ -20,19 +20,14 @@ package com.codehusky.huskyui;
 import com.codehusky.huskyui.states.Page;
 import com.codehusky.huskyui.states.State;
 import com.google.common.collect.Maps;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.inventory.Container;
 import org.spongepowered.api.item.inventory.Inventory;
-import org.spongepowered.api.item.inventory.property.StringProperty;
-import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * The StateContainer's purpose is to be the gateway for information
@@ -57,10 +52,6 @@ public class StateContainer {
      */
     @Nullable private String initialState;
 
-    @Nullable private Consumer<Page> pageUpdater;
-
-    @Nullable public Task scheduledTask;
-
     /**
      * A StateContainer constructor. Left empty to pass equally
      * empty data to the other constructor.
@@ -78,8 +69,6 @@ public class StateContainer {
     public StateContainer(@Nonnull final Map<String, State> states) {
         this.states = states;
         this.initialState = null;
-        this.pageUpdater = null;
-        scheduledTask = null;
     }
 
     /**
@@ -94,8 +83,6 @@ public class StateContainer {
     public StateContainer(@Nonnull final Map<String, State> states, @Nonnull final String initialState) {
         this.states = states;
         this.initialState = initialState;
-        this.pageUpdater = null;
-        scheduledTask = null;
     }
 
     /**
@@ -207,16 +194,15 @@ public class StateContainer {
                 fail(player, "Attempted to open an invalid pagenum!");
             }
         }
-        final State state = this.copy().states.get(pageID);
+        State state = this.states.get(pageID);
 
         if (state == null) {
             fail(player, "Attempted to open a nonexistent state!");
             fail(player, "Invalid ID: " + id);
             InventoryUtil.close(player);
-            this.scheduledTask.cancel();
-            this.scheduledTask = null;
             return;
         }
+        state = state.copy(this);
 
         state.setObserver(player);
 
@@ -224,52 +210,16 @@ public class StateContainer {
             //InventoryUtil.close(player);
             Page page = (Page) state;
             Inventory toShow = page.getPageView(pagenum);
-            if(this.scheduledTask != null){
-                page.interrupt();
-                this.scheduledTask.cancel();
-                this.scheduledTask = null;
-            }
-            if(page.isUpdatable()){
-                this.pageUpdater = page.getUpdateConsumer();
-                this.scheduledTask = Sponge.getScheduler().createTaskBuilder().execute(() -> {
-                    if(page.getObserver().getOpenInventory().isPresent()) {
-                        Container container = page.getObserver().getOpenInventory().get();
-                        if (container.getProperties(StringProperty.class).size() != 2) {
-                            page.interrupt();
-                            scheduledTask.cancel();
-                            scheduledTask = null;
-                            return;
-                        }else{
-                            StringProperty property1 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[0]);
-                            StringProperty property2 = ((StringProperty)container.getProperties(StringProperty.class).toArray()[1]);
-                            if(!property2.getValue().equals(page.getId())) {
-                                if (!property1.getValue().equals(page.getId())) {
-                                    page.interrupt();
-                                    scheduledTask.cancel();
-                                    scheduledTask = null;
-                                    return;
-                                }
-                            }
-                        }
-                    }
-                    if(page.getActualTicks() % page.getUpdateTickRate() == 0) {
-                        this.pageUpdater.accept(page);
-                    }
-                    page.tickIncrement();
-
-                }).intervalTicks(1).submit(HuskyUI.getInstance());
-            }
             InventoryUtil.open(player, toShow);
 
             return;
         }
 
         InventoryUtil.close(player);
-        this.scheduledTask.cancel();
-        this.scheduledTask = null;
         fail(player, "Attempted to open an invalid or incomplete state!");
         fail(player, "Invalid ID: " + id);
     }
+
 
     /**
      * Opens the initial {@link State} for the {@link Player}.

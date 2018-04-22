@@ -33,6 +33,7 @@ import org.spongepowered.api.item.inventory.*;
 import org.spongepowered.api.item.inventory.property.InventoryDimension;
 import org.spongepowered.api.item.inventory.property.InventoryTitle;
 import org.spongepowered.api.item.inventory.property.StringProperty;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextStyles;
@@ -118,6 +119,8 @@ public class Page extends State {
     private Consumer<Page> updateConsumer;
     private Runnable interrupt;
     private Inventory cachedInventory;
+
+    private Task updaterTask;
 
     /**
      * Constructs a Page.
@@ -319,6 +322,9 @@ public class Page extends State {
                     } else {
                         event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
                         event.getCursorTransaction().setValid(true);
+                        if((event instanceof InteractInventoryEvent.Close)) {
+                            interrupt();
+                        }
                     }
                 })
                 .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(this.title))
@@ -375,6 +381,12 @@ public class Page extends State {
         }
         if(updatable){
             this.cachedInventory = inventory;
+            this.updaterTask = Task.builder().intervalTicks(1).execute(() -> {
+                if(this.getActualTicks() % this.getUpdateTickRate() == 0) {
+                    this.updateConsumer.accept(this);
+                }
+                this.tickIncrement();
+            }).submit(HuskyUI.getInstance());
         }
         return inventory;
     }
@@ -405,6 +417,10 @@ public class Page extends State {
     public void interrupt(){
         if(this.interrupt != null) {
             this.interrupt.run();
+        }
+        if(updaterTask != null) {
+            updaterTask.cancel();
+            updaterTask = null;
         }
     }
 

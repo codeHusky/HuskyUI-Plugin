@@ -140,10 +140,6 @@ public class Action {
                         this.container.openState(this.observer, this.container.getState(currentState).getParent());
                     } else {
                         this.observer.playSound(SoundTypes.BLOCK_ANVIL_LAND, this.observer.getLocation().getPosition(), 0.5);
-                        if(container.scheduledTask != null){
-                            container.scheduledTask.cancel();
-                            container.scheduledTask = null;
-                        }
                         InventoryUtil.close(this.observer);
                         this.observer.sendMessage(Text.of(TextColors.RED, "Impossible BACK action - closing broken State."));
                     }
