@@ -415,12 +415,21 @@ public class Page extends State {
     }
 
     public void interrupt(){
+        System.out.println("-++-\nINTERRUPT\nInterrupt Is Null: " + (this.interrupt == null) + "\nUpdater Task Is Null: " + (this.updaterTask == null));
         if(this.interrupt != null) {
-            this.interrupt.run();
+            try {
+                this.interrupt.run();
+            }catch (Exception e){
+                HuskyUI.getLogger().error("Error occurred while running HuskyUI Page interrupt.");
+                e.printStackTrace();
+            }
+            System.out.println("Interrupt ran.");
         }
         if(updaterTask != null) {
             updaterTask.cancel();
+            System.out.println("Updater cancelled");
             updaterTask = null;
+            System.out.println("Updater set to null.");
         }
     }
 
