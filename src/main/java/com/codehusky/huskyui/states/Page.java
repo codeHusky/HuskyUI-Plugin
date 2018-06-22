@@ -288,6 +288,10 @@ public class Page extends State {
                 .property(InventoryDimension.PROPERTY_NAME, this.inventoryDimension)
                 .of(this.inventoryArchetype)
                 .listener(InteractInventoryEvent.class, event -> {
+                    if(event instanceof InteractInventoryEvent.Close){
+                        interrupt();
+                        return;
+                    }
                     if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
                         event.setCancelled(true);
                         try{
@@ -322,9 +326,6 @@ public class Page extends State {
                     } else {
                         event.getCursorTransaction().setCustom(ItemStackSnapshot.NONE);
                         event.getCursorTransaction().setValid(true);
-                        if((event instanceof InteractInventoryEvent.Close)) {
-                            interrupt();
-                        }
                     }
                 })
                 .property(InventoryTitle.PROPERTY_NAME, InventoryTitle.of(this.title))
