@@ -706,7 +706,18 @@ public class Page extends State
 		 */
 		public PageBuilder addElement(@Nonnull final Element element)
 		{
-			this.elements.put(this.elements.size(), element);
+			int slot = elements.size();
+
+			for (int i = 0; i < elements.size(); i++)
+			{
+				if (!elements.containsKey(i))
+				{
+					slot = i;
+					break;
+				}
+			}
+
+			this.elements.put(slot, element);
 			return this;
 		}
 
