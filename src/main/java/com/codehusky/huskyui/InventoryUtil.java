@@ -13,7 +13,6 @@ public class InventoryUtil {
 
     public static void open(Player player, Inventory inventory) {
         Task.builder().execute(()-> {
-            player.closeInventory();
             player.openInventory(inventory);
         }).delayTicks(1).submit(HuskyUI.getInstance());
     }

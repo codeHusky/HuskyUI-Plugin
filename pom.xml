@@ -6,7 +6,7 @@
 
     <groupId>com.codehusky</groupId>
     <artifactId>HuskyUI</artifactId>
-    <version>0.6.0PRE2</version>
+    <version>0.6.0PRE3</version>
 
     <repositories>
         <repository>
