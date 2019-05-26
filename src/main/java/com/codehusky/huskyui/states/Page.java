@@ -289,7 +289,9 @@ public class Page extends State {
                 .of(this.inventoryArchetype)
                 .listener(InteractInventoryEvent.class, event -> {
                     if(event instanceof InteractInventoryEvent.Close){
-                        interrupt();
+                        if(this.interrupt != null) {
+                            interrupt();
+                        }
                         return;
                     }
                     if (!(event instanceof InteractInventoryEvent.Open) && !(event instanceof InteractInventoryEvent.Close)) {
@@ -416,15 +418,19 @@ public class Page extends State {
     }
 
     public void interrupt(){
-        System.out.println("-++-\nINTERRUPT\nInterrupt Is Null: " + (this.interrupt == null) + "\nUpdater Task Is Null: " + (this.updaterTask == null));
-        if(this.interrupt != null) {
+        //System.out.println("-++-\nINTERRUPT\nInterrupt Is Null: " + (this.interrupt == null) + "\nUpdater Task Is Null: " + (this.updaterTask == null));
+        if(hasInterupt()) {
             try {
                 this.interrupt.run();
+                this.interrupt = null;
+                System.out.println("Interrupt ran.");
             }catch (Exception e){
                 HuskyUI.getLogger().error("Error occurred while running HuskyUI Page interrupt.");
                 e.printStackTrace();
             }
-            System.out.println("Interrupt ran.");
+
+        }else{
+            throw new RuntimeException("Interrupt either doen't exist, or has been called already");
         }
         if(updaterTask != null) {
             updaterTask.cancel();
@@ -432,7 +438,15 @@ public class Page extends State {
             updaterTask = null;
             System.out.println("Updater set to null.");
         }
+        if(hasObserver()){
+            getObserver().closeInventory();
+        }
     }
+
+    public boolean hasInterupt() {
+        return this.interrupt != null;
+    }
+
 
     /**
      * {@inheritDoc}
